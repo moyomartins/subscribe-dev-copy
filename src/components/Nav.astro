@@ -1,0 +1,75 @@
+---
+---
+
+<header class="nav-shell">
+  <nav class="wrap nav" aria-label="Main">
+    <a class="wordmark" href="/">subscribe<span>.dev</span></a>
+    <div class="links">
+      <a href="https://docs.subscribe.dev">Docs</a>
+      <a href="#models">Models</a>
+      <a href="https://www.npmjs.com/package/@subscribe.dev/react">npm</a>
+    </div>
+    <a class="btn btn-solid nav-cta" href="https://platform.subscribe.dev">Start your project</a>
+  </nav>
+</header>
+
+<style>
+  .nav-shell {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-nav);
+    background: oklch(0.42 0.19 264 / 0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--hairline-on-blue);
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-lg);
+    padding-block: 0.9rem;
+  }
+
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+
+  .wordmark span {
+    color: var(--mist);
+  }
+
+  .links {
+    display: flex;
+    gap: clamp(1.25rem, 3vw, 2.25rem);
+    margin-inline-start: auto;
+  }
+
+  .links a {
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--mist);
+    padding: 0.5rem 0.1rem;
+    transition: color var(--dur-feedback) var(--ease-out-quart);
+  }
+
+  .links a:hover {
+    color: var(--white);
+  }
+
+  .nav-cta {
+    padding: 0.6rem 1.3rem;
+    font-size: 0.92rem;
+  }
+
+  @media (max-width: 720px) {
+    .links {
+      display: none;
+    }
+  }
+</style>

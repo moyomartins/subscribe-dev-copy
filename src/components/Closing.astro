@@ -1,0 +1,355 @@
+---
+const footerGroups = [
+  {
+    title: 'Product',
+    links: [
+      ['Models', '#models'],
+      ['Billing', 'https://docs.subscribe.dev'],
+      ['Usage metering', 'https://docs.subscribe.dev'],
+      ['Credit limits', 'https://docs.subscribe.dev'],
+      ['Dashboard', 'https://platform.subscribe.dev'],
+    ],
+  },
+  {
+    title: 'Developers',
+    links: [
+      ['Documentation', 'https://docs.subscribe.dev'],
+      ['React SDK', 'https://docs.subscribe.dev'],
+      ['npm package', 'https://www.npmjs.com/package/@subscribe.dev/react'],
+      ['API reference', 'https://docs.subscribe.dev'],
+      ['Examples', 'https://docs.subscribe.dev'],
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      ['Contact', 'mailto:hello@subscribe.dev'],
+      ['Privacy', 'https://subscribe.dev/privacy'],
+      ['Terms', 'https://subscribe.dev/terms'],
+      ['Status', 'https://status.subscribe.dev'],
+    ],
+  },
+];
+---
+
+<section class="closing">
+  <div class="closing-grid" aria-hidden="true"></div>
+  <div class="closing-glow" aria-hidden="true"></div>
+  <div class="wrap closing-inner">
+    <div class="install-pill enter">
+      <span>$</span>
+      <code>npm install @subscribe.dev/react</code>
+      <i></i>
+      <span>one frontend package</span>
+    </div>
+    <h2 class="enter" style="--i: 1">Turn your frontend into a business.</h2>
+    <p class="enter" style="--i: 2">
+      Ship subscriptions, usage metering, credit limits, and secure access to
+      100+ AI models without building another backend.
+    </p>
+    <div class="ctas enter" style="--i: 3">
+      <a class="btn closing-primary" href="https://platform.subscribe.dev">Start your project <span>→</span></a>
+      <a class="btn closing-secondary" href="https://docs.subscribe.dev">Read the docs</a>
+    </div>
+    <div class="command-line enter" style="--i: 4" aria-label="subscribe.dev setup flow">
+      <span><i></i>provider connected</span>
+      <b>→</b>
+      <span><i></i>user metered</span>
+      <b>→</b>
+      <span><i></i>subscription live</span>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-atmosphere" aria-hidden="true"></div>
+  <div class="footer-glow" aria-hidden="true"></div>
+  <div class="wrap footer-main">
+    <div class="footer-brand">
+      <a class="mark" href="/" aria-label="subscribe.dev home">subscribe<span>.dev</span></a>
+      <p>Frontend infrastructure for subscriptions, billing, usage metering, and AI access.</p>
+      <div class="footer-signal"><i></i><span>All systems operational</span></div>
+    </div>
+
+    {footerGroups.map((group) => (
+      <nav class="footer-column" aria-label={group.title}>
+        <h3>{group.title}</h3>
+        {group.links.map(([label, href]) => <a href={href}>{label}</a>)}
+      </nav>
+    ))}
+
+    <div class="footer-column footer-cta">
+      <h3>Build with subscribe.dev</h3>
+      <p>Go from model call to paid product.</p>
+      <a href="https://platform.subscribe.dev">Start your project <span>→</span></a>
+      <a href="https://docs.subscribe.dev">Read the docs</a>
+    </div>
+  </div>
+
+  <div class="wrap footer-bottom">
+    <span>© 2026 subscribe.dev</span>
+    <code>client.run('your-next-product')</code>
+    <span>Built for frontend teams</span>
+  </div>
+</footer>
+
+<style>
+  .closing {
+    position: relative;
+    isolation: isolate;
+    min-height: 46rem;
+    padding-block: clamp(7rem, 13vw, 11rem);
+    overflow: visible;
+    background: var(--blue);
+    text-align: center;
+  }
+
+  .closing::after {
+    position: absolute;
+    z-index: -3;
+    right: 0;
+    bottom: -12rem;
+    left: 0;
+    height: 18rem;
+    background: linear-gradient(to bottom, transparent, oklch(0.12 0.08 264 / 0.52) 65%, oklch(0.12 0.08 264));
+    content: '';
+    pointer-events: none;
+  }
+
+  .closing-grid {
+    position: absolute;
+    z-index: -2;
+    inset: 0 0 -9rem;
+    background-image:
+      linear-gradient(oklch(1 0 0 / 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(1 0 0 / 0.07) 1px, transparent 1px);
+    background-size: 5rem 5rem;
+    mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 82%, transparent);
+  }
+
+  .closing-glow {
+    position: absolute;
+    z-index: -1;
+    top: 8%;
+    left: 50%;
+    width: min(64rem, 90vw);
+    aspect-ratio: 1.8;
+    border-radius: 50%;
+    background: oklch(0.78 0.13 255 / 0.2);
+    filter: blur(90px);
+    transform: translateX(-50%);
+  }
+
+  .closing-inner {
+    display: grid;
+    justify-items: center;
+  }
+
+  .install-pill, .command-line, .footer-signal {
+    display: flex;
+    align-items: center;
+    font-family: var(--font-mono);
+  }
+
+  .install-pill {
+    gap: 0.65rem;
+    border: 1px solid oklch(1 0 0 / 0.22);
+    border-radius: var(--radius-pill);
+    padding: 0.6rem 0.8rem;
+    background: oklch(0.18 0.13 264 / 0.25);
+    box-shadow: 0 12px 40px oklch(0.15 0.1 264 / 0.22);
+    backdrop-filter: blur(16px);
+    color: var(--mist);
+    font-size: 0.7rem;
+  }
+
+  .install-pill > span:first-child { color: oklch(0.82 0.15 155); }
+  .install-pill code { color: var(--white); }
+  .install-pill i { height: 1rem; border-left: 1px solid oklch(1 0 0 / 0.22); }
+
+  h2 {
+    max-width: 12ch;
+    margin-top: clamp(2rem, 4vw, 3.5rem);
+    color: var(--white);
+    font-size: clamp(3.5rem, 8.2vw, 7.5rem);
+    font-weight: 780;
+    letter-spacing: -0.065em;
+    line-height: 0.92;
+  }
+
+  .closing p {
+    max-width: 45ch;
+    margin-top: var(--space-xl);
+    color: var(--mist);
+    font-size: clamp(1rem, 1.8vw, 1.25rem);
+    line-height: 1.65;
+  }
+
+  .ctas {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-top: 2.5rem;
+  }
+
+  .closing-primary, .closing-secondary {
+    min-width: 11.5rem;
+    justify-content: center;
+    border: 1px solid var(--white);
+  }
+
+  .closing-primary { gap: 0.7rem; background: var(--white); color: var(--blue); }
+  .closing-primary:hover { background: var(--blue-deep); color: var(--white); }
+  .closing-secondary { border-color: oklch(1 0 0 / 0.35); color: var(--white); }
+  .closing-secondary:hover { border-color: var(--white); background: oklch(1 0 0 / 0.09); }
+
+  .command-line {
+    gap: clamp(0.6rem, 2vw, 1.2rem);
+    margin-top: clamp(4rem, 8vw, 6rem);
+    border-top: 1px solid oklch(1 0 0 / 0.18);
+    border-bottom: 1px solid oklch(1 0 0 / 0.18);
+    padding: 1rem clamp(0.5rem, 3vw, 1.5rem);
+    color: var(--mist);
+    font-size: 0.66rem;
+  }
+
+  .command-line span { display: flex; align-items: center; gap: 0.45rem; white-space: nowrap; }
+  .command-line i, .footer-signal i { width: 6px; height: 6px; border-radius: 50%; background: oklch(0.74 0.17 155); box-shadow: 0 0 0 5px oklch(0.74 0.17 155 / 0.12), 0 0 18px oklch(0.74 0.17 155 / 0.4); }
+  .command-line b { color: oklch(1 0 0 / 0.4); font-weight: 400; }
+
+  .footer {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    border-top: 1px solid oklch(1 0 0 / 0.06);
+    background:
+      radial-gradient(circle at 8% 25%, oklch(0.37 0.16 264 / 0.2), transparent 28rem),
+      radial-gradient(circle at 92% 38%, oklch(0.42 0.2 264 / 0.2), transparent 34rem),
+      oklch(0.105 0.075 264);
+    color: var(--white);
+  }
+
+  .footer::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background-image:
+      linear-gradient(oklch(1 0 0 / 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(1 0 0 / 0.035) 1px, transparent 1px);
+    background-size: 5rem 5rem;
+    mask-image: linear-gradient(to bottom, oklch(0 0 0 / 0.72), transparent 90%);
+    content: '';
+  }
+
+  .footer::after {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background:
+      linear-gradient(90deg, oklch(0.04 0.03 264 / 0.5), transparent 16%, transparent 84%, oklch(0.04 0.03 264 / 0.5)),
+      linear-gradient(to bottom, transparent 55%, oklch(0.04 0.03 264 / 0.38));
+    content: '';
+    pointer-events: none;
+  }
+
+  .footer-atmosphere {
+    position: absolute;
+    z-index: -1;
+    top: -12rem;
+    left: 50%;
+    width: min(76rem, 110vw);
+    height: 25rem;
+    border-radius: 50%;
+    background: oklch(0.42 0.19 264 / 0.18);
+    filter: blur(90px);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .footer-glow {
+    position: absolute;
+    z-index: -1;
+    right: -12%;
+    bottom: -65%;
+    width: 54rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: oklch(0.48 0.2 264 / 0.2);
+    filter: blur(100px);
+  }
+
+  .footer-main {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(15rem, 1.55fr) repeat(3, minmax(8rem, 0.7fr)) minmax(12rem, 0.9fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    padding-block: clamp(5rem, 8vw, 7rem);
+  }
+
+  .footer-brand { max-width: 20rem; }
+  .mark { color: var(--white); font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; letter-spacing: -0.04em; text-decoration: none; }
+  .mark span { color: oklch(0.77 0.12 255); }
+  .footer-brand p, .footer-cta p { margin-top: 1.2rem; color: var(--mist); font-size: 0.85rem; line-height: 1.65; }
+  .footer-signal { gap: 0.6rem; width: fit-content; margin-top: 2rem; border: 1px solid oklch(1 0 0 / 0.12); border-radius: var(--radius-pill); padding: 0.45rem 0.65rem; color: var(--mist); font-size: 0.58rem; }
+
+  .footer-column { display: flex; flex-direction: column; align-items: flex-start; gap: 0.85rem; }
+  .footer-main > .footer-column:not(.footer-cta) { border-left: 1px solid oklch(1 0 0 / 0.055); padding-left: clamp(1rem, 2vw, 2rem); }
+  .footer-column h3 { margin-bottom: 0.45rem; color: var(--white); font-family: var(--font-mono); font-size: 0.64rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; }
+  .footer-column a { color: var(--mist); font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: color 180ms ease, transform 180ms ease; }
+  .footer-column a:hover { color: var(--white); transform: translateX(3px); }
+  .footer-cta { border-left: 1px solid oklch(1 0 0 / 0.12); padding-left: clamp(1.5rem, 3vw, 3rem); }
+  .footer-cta p { margin: 0 0 0.8rem; font-size: 0.76rem; }
+  .footer-cta a:first-of-type { display: flex; justify-content: space-between; gap: 1rem; width: 100%; border: 1px solid oklch(1 0 0 / 0.17); border-radius: 7px; padding: 0.75rem; background: oklch(1 0 0 / 0.06); color: var(--white); }
+
+  .footer-bottom {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    border-top: 1px solid oklch(1 0 0 / 0.12);
+    padding-block: 1.6rem;
+    color: oklch(1 0 0 / 0.48);
+    font-size: 0.68rem;
+  }
+  .footer-bottom code { position: relative; color: oklch(0.8 0.12 255); font-size: 0.64rem; text-shadow: 0 0 16px oklch(0.65 0.14 255 / 0.38); animation: footer-command-glow 8s ease-in-out infinite; }
+  .footer-bottom code::after { position: absolute; top: 50%; left: -0.7rem; width: calc(100% + 1.4rem); height: 1.8rem; border-radius: var(--radius-pill); background: oklch(0.42 0.19 264 / 0.08); filter: blur(10px); content: ''; opacity: 0.35; transform: translateY(-50%); z-index: -1; }
+  @keyframes footer-command-glow { 50% { color: oklch(0.9 0.08 255); text-shadow: 0 0 22px oklch(0.65 0.14 255 / 0.55); } }
+
+  @media (max-width: 1050px) {
+    .footer-main { grid-template-columns: 1.4fr repeat(3, 0.8fr); }
+    .footer-cta { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr auto auto; align-items: center; border-top: 1px solid oklch(1 0 0 / 0.12); border-left: 0; padding: 2rem 0 0; }
+    .footer-cta h3, .footer-cta p { grid-column: 1; }
+    .footer-cta a:first-of-type { grid-column: 2; grid-row: 1 / 3; width: auto; }
+    .footer-cta a:last-of-type { grid-column: 3; grid-row: 1 / 3; }
+    .footer-main > .footer-column:not(.footer-cta) { padding-left: 1rem; }
+  }
+
+  @media (max-width: 720px) {
+    .closing { min-height: 0; padding-block: 6rem; }
+    .install-pill > span:last-child, .install-pill i { display: none; }
+    h2 { font-size: clamp(3.2rem, 17vw, 5.4rem); }
+    .closing p { font-size: 0.95rem; }
+    .command-line { width: 100%; flex-direction: column; gap: 0.75rem; }
+    .command-line b { transform: rotate(90deg); }
+    .footer-main { grid-template-columns: 1fr 1fr; padding-block: 4rem; }
+    .footer-brand, .footer-cta { grid-column: 1 / -1; max-width: none; }
+    .footer-main > .footer-column:not(.footer-cta) { border-left: 0; padding-left: 0; }
+    .footer-cta { display: flex; align-items: flex-start; }
+    .footer-bottom { align-items: flex-start; flex-direction: column; }
+  }
+
+  @media (max-width: 480px) {
+    .ctas, .ctas .btn { width: 100%; }
+    .footer-main { grid-template-columns: 1fr; }
+    .footer-column, .footer-brand, .footer-cta { grid-column: auto; }
+    .footer-cta { border-top: 1px solid oklch(1 0 0 / 0.12); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .footer-bottom code { animation: none; }
+  }
+</style>

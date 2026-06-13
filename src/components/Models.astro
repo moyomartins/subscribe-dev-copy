@@ -1,0 +1,111 @@
+---
+const models = [
+  { id: 'openai/gpt-4o', kind: 'text' },
+  { id: 'black-forest-labs/flux-schnell', kind: 'image' },
+  { id: 'wan-video/wan-2.2-5b-fast', kind: 'video' },
+];
+---
+
+<section class="models" id="models">
+  <div class="wrap">
+    <div class="head enter">
+      <h2>One <code>run()</code>, every model.</h2>
+      <p>
+        A curated catalog of 100+ models behind a single call. Access is scoped
+        to each user and metered against their tier, so a string is all that
+        changes.
+      </p>
+    </div>
+    <ul class="list">
+      {models.map((model, i) => (
+        <li class="enter" style={`--i: ${i + 1}`}>
+          <code>{model.id}</code>
+          <span class="kind">{model.kind}</span>
+        </li>
+      ))}
+      <li class="more enter" style="--i: 4">
+        <a href="https://docs.subscribe.dev">Browse the full catalog in the docs</a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .models {
+    background: var(--blue-deep);
+    padding-block: clamp(4rem, 8vw, 6.5rem);
+  }
+
+  .head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: var(--space-md) var(--space-2xl);
+    align-items: baseline;
+  }
+
+  h2 {
+    font-size: clamp(1.9rem, 3.6vw, 2.8rem);
+    font-weight: 720;
+  }
+
+  h2 code {
+    font-size: 0.92em;
+  }
+
+  .head p {
+    color: var(--mist);
+    max-width: 46ch;
+  }
+
+  .list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: var(--space-xl);
+  }
+
+  .list li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    border: 1px solid var(--hairline-on-blue);
+    border-radius: var(--radius-pill);
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+  }
+
+  .list code {
+    color: var(--white);
+  }
+
+  .kind {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--mist);
+  }
+
+  .more {
+    border-style: dashed;
+  }
+
+  .more a {
+    color: var(--mist);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    font-size: 0.88rem;
+  }
+
+  .more a:hover {
+    color: var(--white);
+  }
+
+  @media (max-width: 720px) {
+    .head {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

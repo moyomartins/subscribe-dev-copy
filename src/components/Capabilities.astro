@@ -1,0 +1,87 @@
+---
+const rows = [
+  {
+    name: 'Subscriptions & payments',
+    detail: 'Stripe checkout, plan changes, and renewals, already wired. Payment data never touches your code.',
+  },
+  {
+    name: 'Usage metering',
+    detail: 'Per-user credits tracked on every model call. Spend limits enforce themselves by tier.',
+  },
+  {
+    name: '100+ AI models',
+    detail: 'Text, image, and video behind one run() call. Swap models by changing a string.',
+  },
+  {
+    name: 'Auth, included',
+    detail: 'Sign-in ships with the provider. No keys in the browser, no token juggling.',
+  },
+  {
+    name: 'User storage',
+    detail: 'A key-value store scoped to each user, persisted across sessions, one hook away.',
+  },
+];
+---
+
+<section class="caps">
+  <div class="wrap">
+    <h2 class="enter">Everything between your UI and the money.</h2>
+    <ul class="ledger">
+      {rows.map((row, i) => (
+        <li class="enter" style={`--i: ${i + 1}`}>
+          <h3>{row.name}</h3>
+          <p>{row.detail}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .caps {
+    padding-block: var(--space-section);
+  }
+
+  h2 {
+    font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+    font-weight: 740;
+    max-width: 17ch;
+  }
+
+  .ledger {
+    list-style: none;
+    margin-top: var(--space-2xl);
+  }
+
+  .ledger li {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: var(--space-md) var(--space-2xl);
+    align-items: baseline;
+    padding-block: 1.6rem;
+    border-top: 1px solid var(--hairline-on-blue);
+  }
+
+  .ledger li:last-child {
+    border-bottom: 1px solid var(--hairline-on-blue);
+  }
+
+  .ledger h3 {
+    font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+    font-weight: 680;
+    letter-spacing: -0.02em;
+  }
+
+  .ledger p {
+    color: var(--mist);
+    font-size: 1.02rem;
+    max-width: 46ch;
+  }
+
+  @media (max-width: 720px) {
+    .ledger li {
+      grid-template-columns: 1fr;
+      gap: 0.4rem;
+    }
+  }
+</style>

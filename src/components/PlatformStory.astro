@@ -1,0 +1,1654 @@
+---
+const providers = [
+  { mark: 'O', provider: 'OpenAI', name: 'Text generation', model: 'openai/gpt-4o', tier: 'Pro +' },
+  { mark: 'B', provider: 'Black Forest Labs', name: 'Image generation', model: 'black-forest-labs/flux-schnell', tier: 'Free +' },
+  { mark: 'W', provider: 'Wan', name: 'Video generation', model: 'wan-video/wan-2.2-5b-fast', tier: 'Max' },
+  { mark: 'E', provider: 'ElevenLabs', name: 'Speech generation', model: 'speech/*', tier: 'Pro +' },
+  { mark: 'A', provider: 'Anthropic', name: 'Reasoning', model: 'claude-sonnet', tier: 'Pro +' },
+  { mark: 'G', provider: 'Google', name: 'Multimodal', model: 'gemini-2.5-pro', tier: 'Pro +' },
+];
+
+const plans = [
+  { name: 'Free', price: '$0 / month', credits: '20', models: 'Starter set', limit: '20 credits', width: '16%' },
+  { name: 'Pro', price: '$29 / month', credits: '200', models: 'Expanded access', limit: '200 credits', width: '52%', featured: true },
+  { name: 'Max', price: '$99 / month', credits: '1,000', models: '100+ models', limit: '1,000 credits', width: '94%' },
+];
+
+const flow = ['Application', 'subscribe.dev SDK', 'Billing', 'Usage metering', 'Access control', 'AI models'];
+---
+
+<section class="architecture on-paper" id="architecture">
+  <div class="wrap">
+    <div class="section-copy enter">
+      <h2>Full-stack product infrastructure, delivered to your frontend.</h2>
+      <p>
+        The secure client resolves identity, subscription tier, available credits,
+        and billing state before a request reaches an AI model.
+      </p>
+    </div>
+
+    <div class="architecture-map enter" id="request-flow" data-outcome="allowed" style="--i: 1" aria-label="Animated subscribe.dev product architecture">
+      <svg class="architecture-connectors" aria-hidden="true">
+        <path data-connector="user"></path>
+        <path data-connector="app"></path>
+        <path data-connector="models"></path>
+        <path data-connector="stripe"></path>
+        <path data-connector="credits"></path>
+        <circle class="connector-pulse" data-connector-pulse="left" r="4"></circle>
+        <circle class="connector-pulse" data-connector-pulse="right" r="4"></circle>
+      </svg>
+
+      <div class="arch-side arch-inputs">
+        <p class="map-label">Your product</p>
+        <div class="arch-node" data-flow-node="user"><span class="node-icon">U</span><span><b>Users</b><small>user_ada_93</small></span></div>
+        <div class="arch-node" data-flow-node="app"><span class="node-icon">A</span><span><b>Frontend application</b><small>React, Vite, or Bun</small></span></div>
+      </div>
+
+      <div class="arch-lines" aria-hidden="true"></div>
+
+      <div class="control-plane">
+        <div class="plane-head">
+          <span class="signal"></span>
+          <strong>subscribe.dev</strong>
+          <code>request gate</code>
+        </div>
+        <div class="plane-grid">
+          <div data-phase="auth"><span>01</span><b>Authenticate</b><small>Resolve user scope</small></div>
+          <div data-phase="plan"><span>02</span><b>Check plan</b><small>Apply model policy</small></div>
+          <div data-phase="usage"><span>03</span><b>Meter usage</b><small>Reserve 4 credits</small></div>
+          <div data-phase="billing"><span>04</span><b>Record billing</b><small>Sync with Stripe</small></div>
+        </div>
+        <div class="request-log">
+          <span class="ok-dot"></span>
+          <code data-flow-bind="request">POST /run/flux-schnell</code>
+          <strong data-flow-bind="status">checking...</strong>
+          <span data-flow-bind="latency">—</span>
+        </div>
+      </div>
+
+      <div class="arch-lines" aria-hidden="true"></div>
+
+      <div class="arch-side arch-outputs">
+        <p class="map-label">Managed infrastructure</p>
+        <div class="arch-node" data-flow-output="models"><span class="node-icon">M</span><span><b>100+ AI models</b><small>Text, image, video, speech</small></span></div>
+        <div class="arch-node" data-flow-output="stripe"><span class="node-icon">$</span><span><b>Stripe payments</b><small>Subscriptions + renewals</small></span></div>
+        <div class="arch-node" data-flow-output="credits"><span class="node-icon">#</span><span><b>Credit limits</b><small>Automatic per user</small></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="model-access" id="models">
+  <div class="wrap">
+    <div class="section-copy enter">
+      <h2>Run 100+ generative AI models through one client.</h2>
+      <p>Generate text, images, video, and speech. Change a model string; subscribe.dev handles secure user-scoped access.</p>
+    </div>
+
+    <div class="code-result model-router enter" id="model-router" style="--i: 1">
+      <figure class="code-card dark-card">
+        <figcaption><span>Generate.tsx</span><span>frontend</span></figcaption>
+        <pre><code><span class="muted">const</span> {'{'} client, usage, subscriptionStatus {'}'} =
+  useSubscribeDev()
+
+<span class="muted">const</span> result = <span class="muted">await</span> client.run(
+  <span class="green active-model-string">'black-forest-labs/flux-schnell'</span>,
+  {'{'}
+    input: {'{'} prompt: <span class="green">'A lighthouse at dawn'</span> {'}'}
+  {'}'}
+)
+
+<span class="muted">// Secure user scope and credit usage</span>
+console.log(usage, subscriptionStatus)</code></pre>
+        <div class="terminal-line"><span>client.run()</span><code data-router-bind="terminal">flux-schnell → -4 credits</code><strong data-router-bind="status">COMPLETE</strong></div>
+      </figure>
+
+      <div class="model-connector" aria-hidden="true"><i></i><span></span></div>
+
+      <div class="catalog-card paper-card">
+        <div class="card-head">
+          <div><span class="eyebrow">Model access</span><h3>Catalog policy</h3></div>
+          <span class="status-pill">Live</span>
+        </div>
+        <div class="catalog-summary">
+          <span><b>100+</b><small>AI models</small></span>
+          <span><b>4</b><small>modalities</small></span>
+          <span><b>1</b><small>run() call</small></span>
+        </div>
+        <div class="provider-strip" aria-label="Supported providers">
+          {providers.filter((provider) => ['OpenAI', 'Anthropic', 'Google', 'Black Forest Labs', 'ElevenLabs'].includes(provider.provider)).map((provider) => (
+            <span data-provider={provider.provider}>{provider.provider}</span>
+          ))}
+        </div>
+        <ul class="provider-list">
+          {providers.map((provider) => (
+            <li data-model={provider.model} data-provider={provider.provider}>
+              <span class="provider-mark">{provider.mark}</span>
+              <span class="provider-name"><b>{provider.name}</b><code>{provider.model}</code></span>
+              <span class="provider-tier">{provider.tier}</span>
+              <span class="provider-state">Enabled</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tiers on-paper">
+  <div class="wrap">
+    <div class="section-copy enter">
+      <h2>Take subscription payments. Enforce the tier automatically.</h2>
+      <p>Free, Pro, and Max plans become secure per-user model access and credit limits, with payments powered by Stripe.</p>
+    </div>
+
+    <div class="tier-engine enter" id="policy-engine" style="--i: 1">
+      <div class="tier-toolbar">
+        <span><i></i> Access policy</span>
+        <code>plans.config.ts</code>
+        <span class="policy-deploy-status" data-policy-bind="deploy">Monitoring plan usage</span>
+        <button type="button" data-policy-bind="button">Policies live</button>
+        <span class="policy-cursor" aria-hidden="true"></span>
+        <div class="policy-progress" aria-hidden="true"><i></i></div>
+      </div>
+      <div class="tier-grid">
+        <div class="policy-signal" aria-hidden="true"><i></i></div>
+        {plans.map((plan, index) => (
+          <article class:list={['tier-card', { featured: plan.featured }]} data-policy-plan={index}>
+            <div class="tier-top">
+              <h3>{plan.name}</h3>
+              <span class="tier-state" data-policy-bind="badge">{plan.name === 'Free' ? 'Monitoring' : 'Standby'}</span>
+              <span>{plan.price}</span>
+            </div>
+            <dl>
+              <div><dt>Monthly credits</dt><dd>{plan.credits}</dd></div>
+              <div><dt>Model access</dt><dd>{plan.models}</dd></div>
+              <div><dt>User spend limit</dt><dd>{plan.limit}</dd></div>
+            </dl>
+            <div class="access-track"><i style={`--fill: ${plan.width}`}></i></div>
+            <p data-policy-bind="plan-status">{plan.name === 'Free' ? 'Usage available' : plan.name === 'Pro' ? 'Subscription operating' : 'Unlimited access operating'}</p>
+          </article>
+        ))}
+      </div>
+      <div class="policy-footer">
+        <span data-policy-footer="0"><i class="ok-dot"></i><code>Stripe billing active</code></span>
+        <span data-policy-footer="1"><i class="ok-dot"></i>Access policy checked</span>
+        <span data-policy-footer="2"><i class="ok-dot"></i>Free limit enforced</span>
+        <span data-policy-footer="3"><i class="ok-dot"></i><strong>Pro + Max continue</strong></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="metering">
+  <div class="wrap">
+    <div class="section-copy enter">
+      <h2>User-scoped credit limits stop overspend automatically.</h2>
+      <p>Track consumption and credits remaining for every subscriber. When a user reaches their tier limit, access stops safely.</p>
+    </div>
+
+    <div class="dashboard-frame coded-dashboard enter" style="--i: 1">
+      <div class="dashboard-frame-bar" aria-hidden="true">
+        <span class="frame-dots"><i></i><i></i><i></i></span>
+        <span class="frame-address">platform.subscribe.dev/dashboard</span>
+        <span class="frame-live"><i></i>Live product</span>
+      </div>
+      <div class="dashboard-image-wrap replacement-dashboard dashboard-inner-viewport">
+        <img src="/images/subscribe-dashboard-frame.png" alt="subscribe.dev dashboard overview" />
+      </div>
+      <div class="product-dashboard retired-dashboard" id="usage-dashboard">
+        <svg class="dashboard-icon-sprite" aria-hidden="true">
+          <symbol id="d-layout" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></symbol>
+          <symbol id="d-folder" viewBox="0 0 24 24"><path d="M3 7h5l2 2h11v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M3 7V5a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v2"/></symbol>
+          <symbol id="d-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+          <symbol id="d-card" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></symbol>
+          <symbol id="d-code" viewBox="0 0 24 24"><path d="m8 9-4 3 4 3m8-6 4 3-4 3m-2-9-4 12"/></symbol>
+          <symbol id="d-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+          <symbol id="d-wallet" viewBox="0 0 24 24"><path d="M20 7V5a2 2 0 0 0-2-2H5a3 3 0 0 0 0 6h15v10H5a3 3 0 0 1-3-3V6"/><path d="M16 13h2"/></symbol>
+          <symbol id="d-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 8-8m-3 3 3 3m-6 0 3 3"/></symbol>
+          <symbol id="d-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+          <symbol id="d-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M5 21h14"/></symbol>
+          <symbol id="d-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="M12 8v4m0 4h.01"/></symbol>
+          <symbol id="d-activity" viewBox="0 0 24 24"><path d="M3 12h4l2-7 4 14 2-7h6"/></symbol>
+          <symbol id="d-battery" viewBox="0 0 24 24"><rect width="16" height="10" x="3" y="7" rx="2"/><path d="M21 11v2M7 11v2m4-2v2"/></symbol>
+          <symbol id="d-alert" viewBox="0 0 24 24"><path d="m21 19-9-16-9 16Z"/><path d="M12 9v4m0 4h.01"/></symbol>
+          <symbol id="d-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol>
+          <symbol id="d-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8m-4-4h8"/></symbol>
+          <symbol id="d-x" viewBox="0 0 24 24"><path d="m7 7 10 10M17 7 7 17"/></symbol>
+        </svg>
+        <aside class="product-sidebar">
+          <div class="product-user">
+            <span class="product-avatar">JD</span>
+            <span><b>John Doe</b><small>john.doe@example.com</small></span>
+          </div>
+          <div class="product-nav-group">
+            <small>Overview</small>
+            <nav aria-label="Product dashboard navigation">
+              <span><svg><use href="#d-layout"></use></svg>Dashboard</span><span><svg><use href="#d-folder"></use></svg>Projects</span><button class="active" data-dashboard-view="Users"><svg><use href="#d-users"></use></svg>Users</button><span><svg><use href="#d-card"></use></svg>Transactions</span><span><svg><use href="#d-code"></use></svg>Playground</span>
+            </nav>
+          </div>
+          <div class="product-nav-group">
+            <small>Account</small>
+            <nav><span><svg><use href="#d-user"></use></svg>Account Profile</span><span><svg><use href="#d-wallet"></use></svg>Wallet</span><span><svg><use href="#d-key"></use></svg>API Keys</span></nav>
+          </div>
+          <div class="product-plan"><span>▣</span><span><b>Pro</b><small>10,000 monthly credits</small></span></div>
+        </aside>
+
+        <main class="product-main">
+          <header class="product-header"><svg><use href="#d-users"></use></svg><b data-dashboard-bind="header">Users</b><label><svg><use href="#d-search"></use></svg><input type="text" placeholder="Search users..." aria-label="Search dashboard" /></label></header>
+          <div class="product-content">
+            <div class="overview-heading"><div><h3 data-dashboard-bind="title">Users & Credit Limits</h3><p data-dashboard-bind="subtitle">Monitor every user’s credits, limits, and blocked requests.</p></div><div class="dashboard-actions"><button data-dashboard-action="export"><svg><use href="#d-download"></use></svg>Export events</button><button data-dashboard-action="blocked"><svg><use href="#d-shield"></use></svg>View blocked requests</button></div></div>
+            <div class="overview-metrics">
+              <article><svg><use href="#d-activity"></use></svg><small>Credits consumed</small><b class="purple">68,429</b><span>of 100,000 monthly</span></article>
+              <article><svg><use href="#d-battery"></use></svg><small>Credits remaining</small><b class="success">31,571</b><span>renews in 18 days</span></article>
+              <article><svg><use href="#d-users"></use></svg><small>Active subscribers</small><b>842</b><span>across paid plans</span></article>
+              <article><svg><use href="#d-alert"></use></svg><small>Limits reached</small><b class="danger">18</b><span>users at limit</span></article>
+              <article><svg><use href="#d-shield"></use></svg><small>Blocked overspend</small><b class="danger">42</b><span>requests stopped</span></article>
+            </div>
+
+            <div class="usage-product-grid">
+            <section class="product-chart-card">
+              <div class="product-chart-head"><div><b data-dashboard-bind="chart-title">Credit consumption</b><small data-dashboard-bind="chart-note">Consumed credits with 80K limit threshold</small></div><div class="chart-filters"><button class="active" data-range="7d">7d</button><button data-range="30d">30d</button><button data-range="90d">90d</button></div></div>
+              <div class="product-chart" aria-label="Credit consumption chart">
+                <div class="threshold-line"><span>80K limit threshold</span></div>
+                <div class="chart-grid-lines"><i></i><i></i><i></i><i></i><i></i></div>
+                <svg viewBox="0 0 800 220" preserveAspectRatio="none" aria-hidden="true">
+                  <path class="chart-area" d="M0 185 C80 175 115 170 170 145 S270 110 330 118 S430 145 500 92 S620 62 800 42 L800 220 L0 220 Z" />
+                  <path class="revenue-line" d="M0 185 C80 175 115 170 170 145 S270 110 330 118 S430 145 500 92 S620 62 800 42" />
+                  <path class="spend-line" d="M0 48 C120 53 210 65 310 78 S510 100 620 128 S730 150 800 170" />
+                </svg>
+                <div class="chart-labels" data-dashboard-bind="labels"><span>Jun 7</span><span>Jun 8</span><span>Jun 9</span><span>Jun 10</span><span>Jun 11</span><span>Jun 12</span><span>Jun 13</span></div>
+              </div>
+            </section>
+
+            <section class="highest-usage spend-controls-card">
+              <div class="product-chart-head"><div><b>Spend control status</b><small>Protection applied before every model request</small></div></div>
+              <div class="control-health"><span class="control-icon"><svg><use href="#d-check"></use></svg></span><div><b>All spend controls healthy</b><small>Every active user has a configured credit ceiling.</small></div></div>
+              <div class="control-stat"><span>42</span><div><b>requests blocked</b><small>before overspend this period</small></div></div>
+              <div class="control-stat"><span>18</span><div><b>users at limit</b><small>requests paused automatically</small></div></div>
+            </section>
+            </div>
+            <section class="credit-user-table">
+              <div class="credit-user-head"><span>User</span><span>Plan</span><span>Credits used</span><span>Remaining</span><span>Usage</span><span>Limit status</span><span>Blocked</span></div>
+              <button class="credit-user-row" data-name="John Doe" data-user="john.doe@example.com" data-plan="Pro" data-used="8,412 / 10,000" data-remaining="1,588" data-status="Healthy" data-blocked="0"><span><i>JD</i><b>John Doe<small>john.doe@example.com</small></b></span><span>Pro</span><span>8,412</span><span>1,588</span><strong>84%</strong><em class="healthy">Healthy</em><span>0</span></button>
+              <button class="credit-user-row" data-name="Sarah Chen" data-user="sarah@example.com" data-plan="Free" data-used="20 / 20" data-remaining="0" data-status="Limit reached" data-blocked="12"><span><i>SC</i><b>Sarah Chen<small>sarah@example.com</small></b></span><span>Free</span><span>20</span><span>0</span><strong class="danger">100%</strong><em class="reached">Limit reached</em><span>12</span></button>
+              <button class="credit-user-row" data-name="Kai Northstar" data-user="kai@northstar.ai" data-plan="Max" data-used="6,091 / 50,000" data-remaining="43,909" data-status="Healthy" data-blocked="0"><span><i>KN</i><b>Kai Northstar<small>kai@northstar.ai</small></b></span><span>Max</span><span>6,091</span><span>43,909</span><strong>12%</strong><em class="healthy">Healthy</em><span>0</span></button>
+              <button class="credit-user-row" data-name="Maya Cole" data-user="maya@frame.tools" data-plan="Pro" data-used="4,818 / 10,000" data-remaining="5,182" data-status="Warning" data-blocked="3"><span><i>MC</i><b>Maya Cole<small>maya@frame.tools</small></b></span><span>Pro</span><span>4,818</span><span>5,182</span><strong class="warning">48%</strong><em class="warning">Warning</em><span>3</span></button>
+            </section>
+            <div class="dashboard-drawer" aria-hidden="true"><button class="drawer-close" data-dashboard-action="close"><svg><use href="#d-x"></use></svg></button><small>User limit details</small><h4 data-drawer-bind="name">John Doe</h4><p data-drawer-bind="email">john.doe@example.com</p><dl><div><dt>Subscription plan</dt><dd data-drawer-bind="plan">Pro</dd></div><div><dt>Credits used</dt><dd data-drawer-bind="used">8,412 / 10,000</dd></div><div><dt>Credits remaining</dt><dd data-drawer-bind="remaining">1,588</dd></div><div><dt>Blocked requests</dt><dd data-drawer-bind="blocked">0</dd></div><div><dt>Limit status</dt><dd data-drawer-bind="status">Healthy</dd></div><div><dt>Recent model requests</dt><dd data-drawer-bind="recent">openai/gpt-4o · flux-schnell</dd></div></dl><button class="drawer-action" data-dashboard-action="increase"><svg><use href="#d-plus"></use></svg>Increase limit</button></div>
+            <div class="blocked-modal" aria-hidden="true"><div class="blocked-log"><button class="drawer-close" data-dashboard-action="close-blocked"><svg><use href="#d-x"></use></svg></button><span class="blocked-log-icon"><svg><use href="#d-shield"></use></svg></span><h4>Blocked request log</h4><p>Requests stopped before they could exceed a user’s tier limit.</p><div class="blocked-log-head"><span>User</span><span>Model requested</span><span>Reason</span><span>Timestamp</span></div><div class="blocked-log-row"><span>sarah@example.com</span><span>openai/gpt-4o</span><span>Tier limit reached</span><span>2m ago</span></div><div class="blocked-log-row"><span>maya@frame.tools</span><span>flux-schnell</span><span>Spend control</span><span>18m ago</span></div><div class="blocked-log-row"><span>sarah@example.com</span><span>claude-sonnet</span><span>No credits remaining</span><span>42m ago</span></div></div></div>
+            <div class="dashboard-toast" role="status" aria-live="polite"></div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="workflow on-paper">
+  <div class="wrap">
+    <div class="section-copy enter">
+      <h2>A request moves through the whole revenue stack.</h2>
+      <p>Your application makes one SDK call. subscribe.dev handles every decision between intent and inference.</p>
+    </div>
+
+    <div class="flow-map enter" id="revenue-flow" data-scenario="success" style="--i: 1">
+      <div class="revenue-packet" aria-hidden="true">
+        <span>AI request</span>
+        <b data-revenue-bind="packet">Create request</b>
+      </div>
+      {flow.map((item, i) => (
+        <div class:list={['flow-step', { core: i === 1 }]} data-revenue-step={i}>
+          <span>{String(i + 1).padStart(2, '0')}</span>
+          <div class="flow-icon">{i === 0 ? 'UI' : i === 1 ? 'S' : i === 2 ? '$' : i === 3 ? '#' : i === 4 ? '✓' : 'AI'}</div>
+          <b>{item}</b>
+          <small data-revenue-detail>{i === 0 ? 'client.run("openai/gpt-4o")' : i === 1 ? 'resolve user' : i === 2 ? 'verify plan' : i === 3 ? 'reserve credits' : i === 4 ? 'apply policy' : 'stream output'}</small>
+        </div>
+      ))}
+    </div>
+    <div class="flow-narration enter" style="--i: 2" aria-live="polite">
+      <span data-revenue-bind="step">Step 1 of 6</span>
+      <strong data-revenue-bind="narration">Your app asks subscribe.dev to run GPT-4o for this user.</strong>
+    </div>
+    <div class="flow-console enter" id="revenue-console" style="--i: 3">
+      <span class="ok-dot"></span>
+      <code data-revenue-bind="request">request req_92c1</code><i></i>
+      <code data-revenue-bind="user">user pending</code><i></i>
+      <code data-revenue-bind="policy">policy pending</code><i></i>
+      <code data-revenue-bind="credits">credits pending</code><i></i>
+      <strong data-revenue-bind="status">request received</strong>
+    </div>
+  </div>
+</section>
+
+<section class="cicd">
+  <div class="wrap">
+    <div class="section-copy enter">
+      <h2>Turn your frontend into a subscription-powered AI product.</h2>
+      <p>Install the provider, add your public project token, and let your coding assistant wire the first complete flow.</p>
+    </div>
+
+    <div class="code-result reverse enter setup-demo" id="setup-demo" style="--i: 1">
+      <div class="github-card paper-card">
+        <div class="pr-head">
+          <span class="provider-mark">AI</span>
+          <div><span class="eyebrow">Setup assistant</span><h3>Build a complete paid AI flow</h3></div>
+          <span class="status-pill" data-setup-bind="assistant-status">Ready</span>
+        </div>
+        <div class="commit"><span class="ok-dot"></span><code>@subscribe.dev/react</code><span>one frontend package</span><strong>ready</strong></div>
+        <ol class="check-list">
+          <li data-setup-step="0"><span>✓</span><div><b>Install the React provider</b><small>Auth, billing, metering, and model access</small></div><code>Step 01</code></li>
+          <li data-setup-step="1"><span>✓</span><div><b>Add the public project token</b><small>Safe to use from your frontend</small></div><code>Step 02</code></li>
+          <li data-setup-step="2"><span>✓</span><div><b>Run your first AI model</b><small>Text, image, video, or speech</small></div><code>Step 03</code></li>
+          <li data-setup-step="3"><span>✓</span><div><b>Open Stripe checkout</b><small>Upgrade when free credits run out</small></div><code>Step 04</code></li>
+        </ol>
+        <div class="pr-footer"><span data-setup-bind="assistant-footer">No backend required</span><button type="button">Read the docs</button></div>
+      </div>
+
+      <figure class="code-card dark-card">
+        <figcaption><span>App.tsx</span><span>complete setup</span></figcaption>
+        <pre><code><span class="setup-code-line" data-setup-code="0"><span class="muted">import</span> {'{'} SubscribeDevProvider {'}'} <span class="muted">from</span> <span class="green">'@subscribe.dev/react'</span></span>
+
+<span class="muted">export function</span> App() {'{'}
+  <span class="muted">return</span> (
+    &lt;SubscribeDevProvider
+<span class="setup-code-line" data-setup-code="1">      projectToken={'{'}PROJECT_TOKEN{'}'}&gt;</span>
+      &lt;YourProduct /&gt;
+    &lt;/SubscribeDevProvider&gt;
+  )
+{'}'}
+
+<span class="setup-code-line" data-setup-code="2"><span class="muted">await</span> client.run(<span class="green">'openai/gpt-4o'</span>)</span>
+<span class="setup-code-line" data-setup-code="3"><span class="muted">await</span> client.checkout(<span class="green">'pro'</span>)</span></code></pre>
+        <div class="terminal-stack">
+          <span data-setup-status="0"><i class="ok-dot"></i><code>Secure user scope connected</code></span>
+          <span data-setup-status="1"><i class="ok-dot"></i><code>Stripe subscription tiers connected</code></span>
+          <span data-setup-status="2"><i class="ok-dot"></i><code>Usage metering ready</code></span>
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  section { padding-block: var(--space-section); }
+  .metering { background: #000; }
+  .section-copy { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(16rem, 0.8fr); gap: 2rem 4rem; align-items: end; }
+  .section-copy h2 { font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 750; max-width: 19ch; }
+  .section-copy p { color: var(--mist); max-width: 46ch; font-size: 1.08rem; }
+  .on-paper .section-copy p { color: var(--ink-soft); }
+  .eyebrow { display: block; font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft); margin-bottom: 0.2rem; }
+  .paper-card { background: var(--white); color: var(--ink); border: 1px solid var(--hairline-on-paper); border-radius: var(--radius-panel); overflow: hidden; }
+  .dark-card { background: var(--blue-deep); color: var(--mist); border: 1px solid var(--hairline-on-blue); border-radius: var(--radius-panel); overflow: hidden; }
+  .ok-dot { width: 8px; height: 8px; border-radius: 50%; background: oklch(0.72 0.16 155); flex: none; }
+
+  .architecture-map { position: relative; display: grid; grid-template-columns: 0.8fr 5rem 1.55fr 5rem 0.85fr; align-items: center; margin-top: 4rem; padding: clamp(1.4rem, 3vw, 2.5rem); border: 1px solid var(--hairline-on-paper); background: oklch(0.98 0.005 264); min-height: 30rem; overflow: hidden; }
+  .architecture-connectors { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+  .architecture-connectors path { fill: none; stroke: var(--blue); stroke-width: 1; stroke-dasharray: 4 4; vector-effect: non-scaling-stroke; opacity: 0.84; }
+  .connector-pulse { fill: var(--blue); opacity: 0; filter: drop-shadow(0 0 4px oklch(0.42 0.19 264 / 0.85)); }
+  .connector-pulse.is-traveling { animation: connector-travel 620ms var(--ease-out-quart) both; }
+  @keyframes connector-travel {
+    0% { opacity: 0; transform: translate(var(--pulse-start-x), var(--pulse-start-y)) scale(0.7); }
+    16% { opacity: 1; transform: translate(var(--pulse-start-x), var(--pulse-start-y)) scale(1); }
+    82% { opacity: 1; transform: translate(var(--pulse-end-x), var(--pulse-end-y)) scale(1); }
+    100% { opacity: 0; transform: translate(var(--pulse-end-x), var(--pulse-end-y)) scale(0.7); }
+  }
+  .arch-side { display: grid; gap: 0.8rem; position: relative; z-index: 2; }
+  .map-label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-soft); margin-bottom: 0.2rem; }
+  .arch-node { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem; background: var(--white); border: 1px solid var(--hairline-on-paper); }
+  .arch-node span:last-child { display: grid; line-height: 1.25; min-width: 0; }
+  .arch-node b { font-size: 0.9rem; }
+  .arch-node small { font-family: var(--font-mono); color: var(--ink-soft); font-size: 0.64rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .node-icon, .provider-mark { display: grid; place-items: center; width: 2rem; height: 2rem; flex: none; background: var(--blue); color: var(--white); font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; border-radius: 50%; }
+  .arch-lines { min-width: 0; }
+  .control-plane { position: relative; z-index: 2; background: var(--blue); color: var(--white); padding: 1rem; box-shadow: 12px 12px 0 var(--blue-deep); }
+  .plane-head { display: flex; align-items: center; gap: 0.65rem; padding: 0.25rem 0.15rem 0.9rem; border-bottom: 1px solid var(--hairline-on-blue); }
+  .plane-head .signal { width: 10px; height: 10px; border-radius: 50%; background: var(--white); box-shadow: 0 0 0 5px oklch(1 0 0 / 0.15); }
+  .plane-head code { margin-left: auto; font-size: 0.65rem; color: var(--mist); }
+  .plane-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 1rem; background: var(--hairline-on-blue); }
+  .plane-grid div { display: grid; gap: 0.1rem; padding: 1rem; background: var(--blue-deep); opacity: 0.48; transition: opacity 300ms var(--ease-out-quart), background-color 300ms var(--ease-out-quart), transform 300ms var(--ease-out-quart), box-shadow 300ms var(--ease-out-quart); }
+  .plane-grid div.is-complete { opacity: 0.76; }
+  .plane-grid div.is-active { opacity: 1; background: oklch(0.36 0.17 264); transform: translateY(-2px); box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.32), 0 8px 20px oklch(0.2 0.12 264 / 0.28); }
+  .plane-grid span { font-family: var(--font-mono); color: var(--mist); font-size: 0.62rem; }
+  .plane-grid b { font-size: 0.9rem; } .plane-grid small { color: var(--mist); font-size: 0.72rem; }
+  .request-log { display: flex; align-items: center; gap: 0.6rem; margin-top: 1rem; padding: 0.65rem 0.75rem; background: var(--white); color: var(--blue); font-size: 0.67rem; }
+  .request-log strong { margin-left: auto; transition: color 250ms var(--ease-out-quart); } .request-log span:last-child { color: var(--ink-soft); min-width: 5.5rem; text-align: right; }
+  .architecture-map[data-outcome='blocked'] .request-log strong { color: oklch(0.52 0.2 25); }
+  .architecture-map[data-outcome='blocked'] .request-log .ok-dot { background: oklch(0.62 0.19 25); }
+  .architecture-map[data-outcome='allowed'] .request-log strong { color: oklch(0.42 0.13 155); }
+  .arch-node { opacity: 0.48; transition: opacity 300ms var(--ease-out-quart), border-color 300ms var(--ease-out-quart), box-shadow 300ms var(--ease-out-quart), transform 300ms var(--ease-out-quart); }
+  .arch-node.is-complete { opacity: 0.76; }
+  .arch-node.is-active { opacity: 1; border-color: var(--blue); transform: translateY(-2px); box-shadow: 0 9px 22px oklch(0.42 0.19 264 / 0.15); }
+  .arch-node.is-active .node-icon { box-shadow: 0 0 0 5px oklch(0.42 0.19 264 / 0.12), 0 0 18px oklch(0.42 0.19 264 / 0.32); }
+  .plane-head .signal { animation: signal-breathe 1.4s ease-in-out infinite; }
+  @keyframes signal-breathe { 50% { transform: scale(0.75); opacity: 0.65; } }
+
+  .model-access, .cicd { background: var(--blue); }
+  .metering { background: #000; }
+  .code-result { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 4vw, 3.5rem); margin-top: 4rem; align-items: center; }
+  .model-router { position: relative; }
+  .model-router .code-card, .model-router .catalog-card { position: relative; z-index: 2; }
+  .model-connector {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: calc(50% - 2rem);
+    width: 4rem;
+    height: 1px;
+    pointer-events: none;
+  }
+  .model-connector i { display: block; width: 100%; border-top: 1px dashed oklch(1 0 0 / 0.52); }
+  .model-connector span {
+    position: absolute;
+    top: -4px;
+    left: 0;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--white);
+    box-shadow: 0 0 0 5px oklch(1 0 0 / 0.14), 0 0 20px oklch(1 0 0 / 0.7);
+    opacity: 0;
+  }
+  .model-router.is-routing .model-connector span { animation: route-pulse 650ms var(--ease-out-quart) both; }
+  @keyframes route-pulse { 0% { opacity: 0; transform: translateX(0) scale(0.65); } 15%, 80% { opacity: 1; } 100% { opacity: 0; transform: translateX(calc(4rem - 9px)) scale(1); } }
+  .code-card figcaption { display: flex; justify-content: space-between; padding: 0.75rem 1rem; border-bottom: 1px solid var(--hairline-on-blue); font-family: var(--font-mono); font-size: 0.68rem; }
+  .code-card figcaption span:last-child { color: var(--mist); }
+  .code-card pre { min-height: 22rem; padding: 1.4rem; overflow-x: auto; font-size: 0.78rem; line-height: 1.85; }
+  .code-card .muted { color: oklch(0.8 0.04 264); } .code-card .green { color: oklch(0.87 0.09 160); }
+  .active-model-string {
+    display: inline-block;
+    min-width: 34ch;
+    border-radius: 3px;
+    transition: color 250ms var(--ease-out-quart), background-color 250ms var(--ease-out-quart), box-shadow 250ms var(--ease-out-quart);
+  }
+  .model-router.is-code-active .active-model-string { color: var(--white); background: oklch(1 0 0 / 0.1); box-shadow: 0 0 0 4px oklch(1 0 0 / 0.08), 0 0 22px oklch(0.87 0.09 160 / 0.22); }
+  .terminal-line { display: flex; align-items: center; gap: 0.8rem; padding: 0.75rem 1rem; border-top: 1px solid var(--hairline-on-blue); font-size: 0.67rem; }
+  .terminal-line span { color: var(--mist); } .terminal-line strong { margin-left: auto; color: oklch(0.87 0.09 160); min-width: 5.5rem; text-align: right; transition: opacity 200ms var(--ease-out-quart), color 200ms var(--ease-out-quart); }
+  .card-head, .dash-title, .pr-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.2rem 1.3rem; border-bottom: 1px solid var(--hairline-on-paper); }
+  .card-head h3, .dash-title h3, .pr-head h3 { font-size: 1.35rem; }
+  .status-pill { border-radius: var(--radius-pill); padding: 0.25rem 0.65rem; background: oklch(0.72 0.16 155 / 0.13); color: oklch(0.4 0.13 155); font-size: 0.7rem; font-weight: 700; }
+  .catalog-summary { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--hairline-on-paper); }
+  .catalog-summary span { display: grid; padding: 1.2rem; border-right: 1px solid var(--hairline-on-paper); }
+  .catalog-summary span:last-child { border: 0; } .catalog-summary b { font-size: 1.5rem; } .catalog-summary small { color: var(--ink-soft); font-size: 0.72rem; }
+  .provider-strip { display: flex; gap: 0.35rem; padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--hairline-on-paper); overflow-x: auto; }
+  .provider-strip span { flex: none; border: 1px solid var(--hairline-on-paper); border-radius: var(--radius-pill); padding: 0.22rem 0.5rem; font-family: var(--font-mono); font-size: 0.55rem; color: var(--ink-soft); transition: color 250ms var(--ease-out-quart), border-color 250ms var(--ease-out-quart), background-color 250ms var(--ease-out-quart), box-shadow 250ms var(--ease-out-quart); }
+  .provider-strip span.is-active { color: var(--blue); border-color: var(--blue); background: oklch(0.42 0.19 264 / 0.06); box-shadow: 0 0 14px oklch(0.42 0.19 264 / 0.15); }
+  .provider-list { list-style: none; padding: 0.7rem; }
+  .provider-list li { display: grid; grid-template-columns: auto 1fr auto auto; gap: 0.7rem; align-items: center; padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--hairline-on-paper); opacity: 0.48; transition: opacity 280ms var(--ease-out-quart), background-color 280ms var(--ease-out-quart), box-shadow 280ms var(--ease-out-quart), transform 280ms var(--ease-out-quart); }
+  .provider-list li.is-active { opacity: 1; background: oklch(0.42 0.19 264 / 0.06); box-shadow: inset 3px 0 0 var(--blue), 0 7px 18px oklch(0.42 0.19 264 / 0.1); transform: translateX(3px); }
+  .provider-list li.is-complete { opacity: 0.75; }
+  .provider-list li:last-child { border: 0; } .provider-name { display: grid; line-height: 1.2; }
+  .provider-name b { font-size: 0.85rem; } .provider-name code, .provider-tier { font-size: 0.64rem; color: var(--ink-soft); }
+  .provider-state { font-size: 0.68rem; font-weight: 700; color: var(--blue); }
+
+  .tier-engine { position: relative; margin-top: 4rem; border: 1px solid var(--hairline-on-paper); opacity: 0; transform: translateY(10px); transition: opacity 650ms var(--ease-out-quart), transform 650ms var(--ease-out-quart), box-shadow 300ms var(--ease-out-quart); }
+  .tier-engine.is-visible { opacity: 1; transform: translateY(0); }
+  .tier-toolbar, .policy-footer { display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; font-size: 0.74rem; }
+  .tier-toolbar { position: relative; border-bottom: 1px solid var(--hairline-on-paper); overflow: hidden; }
+  .tier-toolbar span { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; }
+  .tier-toolbar i { width: 8px; height: 8px; background: var(--blue); border-radius: 50%; }
+  .tier-toolbar code { color: var(--ink-soft); } .tier-toolbar button, .dash-title button, .pr-footer button { margin-left: auto; background: var(--blue); color: var(--white); border-radius: var(--radius-pill); padding: 0.45rem 0.9rem; font-weight: 700; font-size: 0.72rem; }
+  .tier-toolbar button { min-width: 8.5rem; transition: box-shadow 260ms var(--ease-out-quart), background-color 260ms var(--ease-out-quart), transform 260ms var(--ease-out-quart); }
+  .tier-toolbar button.is-pressed { transform: scale(0.96); box-shadow: 0 0 0 4px oklch(0.42 0.19 264 / 0.12); }
+  .tier-engine.is-ready .tier-toolbar button { box-shadow: 0 0 0 5px oklch(0.42 0.19 264 / 0.09), 0 0 24px oklch(0.42 0.19 264 / 0.18); }
+  .tier-engine.is-live .tier-toolbar button { background: oklch(0.48 0.15 155); }
+  .policy-deploy-status { margin-left: auto; color: var(--ink-soft); font-family: var(--font-mono); font-size: 0.62rem; font-weight: 500 !important; }
+  .policy-cursor { position: absolute; z-index: 6; top: 0.35rem; left: 52%; width: 0.8rem; height: 1.05rem; background: #080b12; clip-path: polygon(0 0, 100% 64%, 58% 68%, 77% 100%, 58% 100%, 40% 70%, 0 100%); filter: drop-shadow(0 0 1px #fff) drop-shadow(0 2px 2px rgb(0 0 0 / 0.32)); transform: rotate(-18deg); transform-origin: 20% 20%; transition: left 900ms var(--ease-out-quart), top 900ms var(--ease-out-quart), transform 150ms ease; pointer-events: none; }
+  .tier-engine.is-cursor-at-button .policy-cursor { top: 1.1rem; left: calc(100% - 5.2rem); }
+  .tier-engine.is-cursor-clicking .policy-cursor { transform: rotate(-18deg) scale(0.86); }
+  .tier-toolbar button + .policy-progress { position: absolute; right: 0; bottom: 0; left: 0; height: 2px; background: oklch(0.42 0.19 264 / 0.08); opacity: 0; transition: opacity 200ms ease; }
+  .policy-progress i { display: block; width: 32%; height: 100%; border-radius: 0; background: var(--blue); transform: translateX(-110%); }
+  .tier-engine.is-publishing .policy-progress { opacity: 1; }
+  .tier-engine.is-publishing .policy-progress i { animation: policy-sweep 1150ms var(--ease-out-quart) forwards; }
+  .tier-grid { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); overflow: hidden; }
+  .tier-card { position: relative; z-index: 1; padding: 1.2rem; border-right: 1px solid var(--hairline-on-paper); min-width: 0; opacity: 0.46; transition: opacity 360ms var(--ease-out-quart), background-color 360ms var(--ease-out-quart), box-shadow 360ms var(--ease-out-quart); }
+  .tier-card.is-active, .tier-card.is-complete { opacity: 1; }
+  .tier-card.is-active { background: oklch(0.42 0.19 264 / 0.055); box-shadow: inset 0 3px 0 var(--blue), 0 12px 28px oklch(0.42 0.19 264 / 0.08); }
+  .tier-card:last-child { border: 0; } .tier-card.featured { background: oklch(0.42 0.19 264 / 0.055); }
+  .tier-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.35rem 0.65rem; align-items: center; }
+  .tier-top h3 { min-width: 0; font-size: 1.25rem; }
+  .tier-top > span:last-child { grid-column: 1 / -1; font-family: var(--font-mono); color: var(--blue); font-size: 0.72rem; }
+  .tier-state { justify-self: end; border-radius: var(--radius-pill); padding: 0.2rem 0.45rem; background: oklch(0.42 0.19 264 / 0.08); color: var(--blue); font-size: 0.56rem; font-weight: 750; white-space: nowrap; }
+  .tier-card.is-locked .tier-state { background: oklch(0.92 0.06 25); color: oklch(0.48 0.17 25); }
+  .tier-card.is-operating .tier-state { background: oklch(0.9 0.08 155); color: oklch(0.42 0.14 155); }
+  .tier-card dl { display: grid; gap: 0.7rem; margin-top: 1.5rem; }
+  .tier-card dl div { display: grid; gap: 0.1rem; } .tier-card dt { color: var(--ink-soft); font-size: 0.67rem; } .tier-card dd { font-weight: 700; font-size: 0.86rem; }
+  .tier-card dl div:nth-child(2) { opacity: 0; transform: translateY(3px); transition: opacity 420ms var(--ease-out-quart), transform 420ms var(--ease-out-quart); }
+  .tier-card.is-active dl div:nth-child(2), .tier-card.is-complete dl div:nth-child(2) { opacity: 1; transform: translateY(0); }
+  .tier-card.is-locked { background: oklch(0.97 0.025 25); box-shadow: inset 0 3px 0 oklch(0.55 0.17 25), 0 12px 28px oklch(0.55 0.17 25 / 0.08); }
+  .tier-card.is-locked .access-track i { width: 100%; background: oklch(0.55 0.17 25); }
+  .tier-card.is-locked p { color: oklch(0.48 0.17 25); font-weight: 750; opacity: 1; transform: translateY(0); }
+  .tier-card.is-operating { background: oklch(0.42 0.19 264 / 0.045); box-shadow: inset 0 3px 0 var(--blue), 0 12px 28px oklch(0.42 0.19 264 / 0.08); }
+  .tier-card.is-operating .access-track i { animation: policy-running 2.2s ease-in-out infinite; }
+  .access-track { height: 5px; margin-top: 1.5rem; background: var(--hairline-on-paper); overflow: hidden; }
+  .access-track i { display: block; width: 0; height: 100%; background: var(--blue); transition: width 850ms var(--ease-out-quart); }
+  .tier-card.is-active .access-track i, .tier-card.is-complete .access-track i { width: var(--fill); }
+  .tier-card.is-complete.is-locked .access-track i { width: 100%; background: oklch(0.55 0.17 25); }
+  .tier-card.is-live .access-track i { animation: policy-bar-breathe 3.6s ease-in-out infinite; }
+  .tier-card p { min-height: 1.1rem; margin-top: 0.6rem; color: var(--ink-soft); font-size: 0.68rem; opacity: 0; transform: translateY(3px); transition: opacity 350ms var(--ease-out-quart), transform 350ms var(--ease-out-quart); }
+  .tier-card.is-active p, .tier-card.is-complete p { opacity: 1; transform: translateY(0); }
+  .policy-signal { display: none; }
+  .policy-footer { position: relative; border-top: 1px solid var(--hairline-on-paper); overflow: hidden; isolation: isolate; } 
+  .policy-footer::after { position: absolute; z-index: 1; right: 0; bottom: 0; left: 0; height: 2px; background: linear-gradient(90deg, transparent 0 35%, var(--blue) 50%, transparent 65%); content: ''; opacity: 0; transform: translateX(-100%); pointer-events: none; }
+  .tier-engine.is-propagating .policy-footer::after { opacity: 1; animation: policy-footer-border 5.2s linear forwards; }
+  .policy-footer > span { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 0.4rem; border-radius: var(--radius-pill); padding: 0.18rem 0.35rem; background: var(--white); color: var(--ink-soft); opacity: 0.34; transition: color 300ms ease, opacity 300ms ease, background-color 300ms ease; }
+  .policy-footer > span.is-active { color: var(--blue); opacity: 1; }
+  .policy-footer > span.is-complete { opacity: 0.82; }
+  .policy-footer > span:last-child.is-active, .policy-footer > span:last-child.is-complete { background: oklch(0.9 0.08 155); color: oklch(0.42 0.14 155); }
+  .policy-footer .ok-dot { width: 7px; height: 7px; flex: none; }
+  .policy-footer strong { color: var(--blue); }
+  @keyframes policy-sweep { to { transform: translateX(330%); } }
+  @keyframes policy-footer-border { to { transform: translateX(100%); } }
+  @keyframes policy-bar-breathe { 50% { opacity: 0.7; } }
+  @keyframes policy-running { 50% { opacity: 0.58; } }
+
+  .meter-dashboard { display: grid; grid-template-columns: 12rem 1fr; margin-top: 4rem; background: var(--white); color: var(--ink); border-radius: var(--radius-panel); overflow: hidden; border: 1px solid var(--hairline-on-blue); }
+  .dashboard-frame { margin-top: 4rem; overflow: hidden; border: 1px solid var(--hairline-on-blue); border-radius: var(--radius-panel); background: oklch(0.14 0.01 264); box-shadow: 0 28px 75px oklch(0.18 0.12 264 / 0.38); }
+  .replacement-dashboard { flex: 1; min-height: 0; aspect-ratio: auto; background: #000; }
+  .dashboard-inner-viewport { width: 100%; height: 100%; overflow: hidden; border-radius: inherit; }
+  .replacement-dashboard img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .retired-dashboard { display: none !important; }
+  .coded-dashboard:has(.replacement-dashboard) { aspect-ratio: 12 / 7 !important; }
+  .coded-dashboard:has(.replacement-dashboard) .dashboard-frame-bar { display: none; }
+  .metering .coded-dashboard:has(.replacement-dashboard) {
+    position: relative;
+    isolation: isolate;
+    border: 0;
+    padding: 0;
+    background: #000;
+    box-shadow: 0 28px 65px rgb(7 20 64 / 0.32);
+  }
+  .metering .coded-dashboard:has(.replacement-dashboard)::before {
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    left: 0;
+    width: clamp(4rem, 8vw, 7rem);
+    height: 2px;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(90deg, transparent, rgb(122 215 255 / 0.33) 20%, rgb(245 253 255 / 0.6) 50%, rgb(122 215 255 / 0.33) 80%, transparent);
+    box-shadow: 0 0 5px rgb(126 214 255 / 0.39);
+    offset-path: inset(1px round 21px);
+    offset-anchor: center;
+    offset-rotate: auto;
+    content: '';
+    pointer-events: none;
+    animation: dashboard-edge-orbit 10s linear infinite;
+  }
+  .metering .coded-dashboard:has(.replacement-dashboard)::after {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    border: 1px solid rgb(218 245 255 / 0.14);
+    border-radius: inherit;
+    box-shadow: inset 0 1px rgb(255 255 255 / 0.12);
+    content: '';
+    pointer-events: none;
+  }
+  .metering .coded-dashboard:has(.replacement-dashboard) .replacement-dashboard {
+    position: relative;
+    z-index: 1;
+    border-radius: inherit;
+    overflow: hidden;
+  }
+  @keyframes dashboard-edge-orbit {
+    to { offset-distance: 100%; }
+  }
+  .dashboard-frame-bar { display: flex; align-items: center; gap: 0.8rem; min-height: 2.8rem; padding: 0.65rem 0.85rem; border-bottom: 1px solid oklch(1 0 0 / 0.13); background: var(--blue-deep); color: var(--mist); font-family: var(--font-mono); font-size: 0.65rem; }
+  .frame-dots { display: inline-flex; gap: 0.35rem; }
+  .frame-dots i { width: 8px; height: 8px; border-radius: 50%; background: oklch(1 0 0 / 0.35); }
+  .frame-dots i:first-child { background: oklch(0.68 0.2 25); }
+  .frame-dots i:nth-child(2) { background: oklch(0.82 0.16 85); }
+  .frame-dots i:last-child { background: oklch(0.68 0.17 145); }
+  .frame-address { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .frame-live { display: inline-flex; align-items: center; gap: 0.4rem; margin-left: auto; white-space: nowrap; }
+  .frame-live i { width: 6px; height: 6px; border-radius: 50%; background: oklch(0.72 0.16 155); box-shadow: 0 0 0 3px oklch(0.72 0.16 155 / 0.14); }
+  .dashboard-image-wrap { overflow: hidden; background: #000; }
+  .dashboard-image-wrap img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .product-dashboard { display: grid; grid-template-columns: 11.5rem minmax(52rem, 1fr); min-height: 42rem; overflow-x: auto; background: #f7f9ff; color: #071a4d; }
+  .product-sidebar { position: sticky; left: 0; z-index: 3; display: flex; flex-direction: column; padding: 0.85rem; background: #071a4d; color: #fff; border-right: 1px solid oklch(1 0 0 / 0.12); }
+  .product-user { display: flex; align-items: center; gap: 0.6rem; padding-bottom: 0.85rem; border-bottom: 1px solid oklch(1 0 0 / 0.13); }
+  .product-avatar { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 7px; background: #1744c8; font-size: 0.66rem; font-weight: 800; }
+  .product-user span:last-child, .product-plan span:last-child { display: grid; min-width: 0; line-height: 1.25; }
+  .product-user b { font-size: 0.7rem; }
+  .product-user small { overflow: hidden; color: oklch(1 0 0 / 0.56); font-size: 0.52rem; text-overflow: ellipsis; white-space: nowrap; }
+  .product-nav-group { margin-top: 1rem; }
+  .product-nav-group > small { color: oklch(1 0 0 / 0.46); font-size: 0.52rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  .product-nav-group nav { display: grid; gap: 0.16rem; margin-top: 0.38rem; }
+  .product-nav-group nav span { border-radius: 5px; padding: 0.42rem 0.5rem; color: oklch(1 0 0 / 0.68); font-size: 0.62rem; }
+  .product-nav-group nav .active { background: #fff; color: #071a4d; font-weight: 750; }
+  .product-plan { display: flex; align-items: center; gap: 0.55rem; margin-top: auto; border: 1px solid oklch(1 0 0 / 0.14); border-radius: 7px; padding: 0.6rem; }
+  .product-plan > span:first-child { display: grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 5px; background: oklch(1 0 0 / 0.1); }
+  .product-plan b { font-size: 0.65rem; } .product-plan small { color: oklch(1 0 0 / 0.55); font-size: 0.5rem; }
+  .product-main { min-width: 52rem; background: #f7f9ff; }
+  .product-header { display: flex; align-items: center; gap: 0.65rem; height: 3.1rem; padding-inline: 1rem; border-bottom: 1px solid #d8e0f5; background: #fff; font-size: 0.65rem; }
+  .product-header label { display: flex; align-items: center; gap: 0.35rem; width: 13rem; margin-left: auto; border: 1px solid #d8e0f5; border-radius: 5px; padding: 0.36rem 0.5rem; color: #667085; }
+  .product-header input { width: 100%; border: 0; outline: 0; background: transparent; color: #071a4d; font: inherit; }
+  .product-content { padding: 1rem; }
+  .overview-heading, .activity-head, .product-chart-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+  .overview-heading h3 { font-size: 1rem; } .overview-heading p { color: #667085; font-size: 0.6rem; }
+  .product-status { display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid #d8e0f5; border-radius: 999px; padding: 0.3rem 0.55rem; color: #667085; font-size: 0.52rem; }
+  .product-status i { width: 6px; height: 6px; border-radius: 50%; background: #12b76a; box-shadow: 0 0 0 3px rgb(18 183 106 / 0.12); }
+  .overview-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.55rem; margin-top: 0.8rem; }
+  .overview-metrics article { display: grid; gap: 0.18rem; padding: 0.75rem; border: 1px solid #d8e0f5; border-radius: 8px; background: #fff; box-shadow: 0 5px 14px rgb(7 26 77 / 0.04); }
+  .overview-metrics small, .overview-metrics span { color: #667085; font-size: 0.52rem; }
+  .overview-metrics b { font-family: var(--font-mono); font-size: 0.95rem; font-weight: 500; }
+  .overview-metrics .purple { color: #8b5cf6; } .overview-metrics .success { color: #12b76a; } .overview-metrics .danger { color: #f04438; }
+  .product-chart-card, .project-activity { margin-top: 0.7rem; border: 1px solid #d8e0f5; border-radius: 9px; background: #fff; overflow: hidden; }
+  .product-chart-head, .activity-head { padding: 0.7rem 0.8rem; border-bottom: 1px solid #d8e0f5; }
+  .product-chart-head > div:first-child, .activity-head > div { display: grid; line-height: 1.3; }
+  .product-chart-head b, .activity-head b { font-size: 0.65rem; }
+  .product-chart-head small, .activity-head small { color: #667085; font-size: 0.5rem; }
+  .chart-filters { display: flex; gap: 0.25rem; }
+  .chart-filters span, .activity-head button { border: 1px solid #d8e0f5; border-radius: 5px; padding: 0.28rem 0.45rem; color: #667085; font-size: 0.5rem; }
+  .chart-filters .active, .activity-head button { border-color: #1744c8; background: #1744c8; color: #fff; }
+  .product-chart { position: relative; height: 13.5rem; padding: 0.8rem 1rem 1.4rem; overflow: hidden; }
+  .chart-grid-lines { position: absolute; inset: 0.8rem 1rem 1.4rem; display: grid; grid-template-rows: repeat(5, 1fr); }
+  .chart-grid-lines i { border-top: 1px dashed #d8e0f5; }
+  .product-chart svg { position: relative; z-index: 1; width: 100%; height: 100%; overflow: visible; }
+  .chart-area { fill: rgb(23 68 200 / 0.07); }
+  .revenue-line, .spend-line { fill: none; vector-effect: non-scaling-stroke; stroke-width: 2; }
+  .revenue-line { stroke: #1744c8; } .spend-line { stroke: #f04438; stroke-dasharray: 5 5; }
+  .chart-labels { position: absolute; inset: auto 1rem 0.45rem; display: flex; justify-content: space-between; color: #667085; font-size: 0.46rem; }
+  .activity-head button { font-weight: 700; }
+  .activity-table { min-width: 46rem; }
+  .activity-row { display: grid; grid-template-columns: 2fr repeat(5, 0.7fr); gap: 0.5rem; align-items: center; min-height: 2rem; padding-inline: 0.8rem; border-bottom: 1px solid #e8ecf7; font-size: 0.52rem; }
+  .activity-row:last-child { border: 0; } .activity-row b { font-size: 0.56rem; } .activity-row span { color: #475467; }
+  .activity-row.table-head { min-height: 1.8rem; background: #f7f9ff; color: #667085; font-weight: 700; }
+  .coded-dashboard { display: flex; flex-direction: column; aspect-ratio: 16 / 9; max-height: 44rem; }
+  .coded-dashboard .dashboard-frame-bar { flex: none; }
+  .coded-dashboard .product-dashboard { flex: 1; min-height: 0; height: auto; overflow: auto; }
+  .coded-dashboard .product-sidebar { min-height: 100%; }
+  .product-nav-group nav button { width: 100%; border-radius: 5px; padding: 0.42rem 0.5rem; color: oklch(1 0 0 / 0.68); font-size: 0.62rem; text-align: left; }
+  .product-nav-group nav button.active { background: #fff; color: #071a4d; font-weight: 750; }
+  .product-content { position: relative; min-height: 0; }
+  .dashboard-actions { display: flex; gap: 0.35rem; }
+  .dashboard-actions button, .drawer-action { border: 1px solid #1744c8; border-radius: 5px; padding: 0.34rem 0.5rem; background: #1744c8; color: #fff; font-size: 0.5rem; font-weight: 750; }
+  .dashboard-actions button:first-child { background: #fff; color: #1744c8; }
+  .overview-metrics { grid-template-columns: repeat(5, 1fr); }
+  .overview-metrics button { display: grid; gap: 0.18rem; padding: 0.65rem; border: 1px solid #d8e0f5; border-radius: 8px; background: #fff; text-align: left; box-shadow: 0 5px 14px rgb(7 26 77 / 0.04); }
+  .overview-metrics button.active { border-color: #1744c8; box-shadow: 0 0 0 2px rgb(23 68 200 / 0.1); }
+  .usage-product-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(15rem, 0.8fr); gap: 0.7rem; }
+  .highest-usage { margin-top: 0.7rem; border: 1px solid #d8e0f5; border-radius: 9px; background: #fff; overflow: hidden; }
+  .usage-user { display: grid; grid-template-columns: auto 1fr auto; gap: 0.55rem; align-items: center; width: 100%; padding: 0.62rem 0.7rem; border-bottom: 1px solid #e8ecf7; text-align: left; }
+  .usage-user > span:first-child { display: grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 50%; background: #1744c8; color: #fff; font-size: 0.52rem; font-weight: 800; }
+  .usage-user > span:nth-child(2) { display: grid; min-width: 0; line-height: 1.25; }
+  .usage-user b { overflow: hidden; font-size: 0.52rem; text-overflow: ellipsis; white-space: nowrap; }
+  .usage-user small { color: #667085; font-size: 0.46rem; }
+  .usage-user strong { color: #12b76a; font-family: var(--font-mono); font-size: 0.54rem; }
+  .usage-user strong.danger { color: #f04438; }
+  .spend-health { display: grid; gap: 0.45rem; padding: 0.7rem; }
+  .spend-health b { color: #667085; font-size: 0.5rem; }
+  .threshold-line { position: absolute; z-index: 2; top: 28%; left: 1rem; right: 1rem; border-top: 1px dashed #f04438; }
+  .threshold-line span { position: absolute; top: -0.8rem; right: 0; color: #f04438; font-size: 0.45rem; }
+  .chart-filters button { border: 1px solid #d8e0f5; border-radius: 5px; padding: 0.28rem 0.45rem; color: #667085; font-size: 0.5rem; }
+  .chart-filters button.active { border-color: #1744c8; background: #1744c8; color: #fff; }
+  .dashboard-drawer { position: absolute; z-index: 8; top: 0; right: 0; bottom: 0; width: 17rem; padding: 1rem; border-left: 1px solid #d8e0f5; background: #fff; box-shadow: -16px 0 35px rgb(7 26 77 / 0.14); transform: translateX(105%); transition: transform 320ms var(--ease-out-expo); }
+  .dashboard-drawer.open { transform: translateX(0); }
+  .drawer-close { position: absolute; top: 0.55rem; right: 0.65rem; color: #667085; font-size: 1rem; }
+  .dashboard-drawer > small { color: #667085; font-size: 0.5rem; } .dashboard-drawer h4 { margin-top: 0.2rem; font-size: 0.82rem; }
+  .dashboard-drawer dl { display: grid; gap: 0.55rem; margin-top: 1rem; }
+  .dashboard-drawer dl div { display: flex; justify-content: space-between; gap: 0.7rem; padding-bottom: 0.45rem; border-bottom: 1px solid #e8ecf7; font-size: 0.52rem; }
+  .dashboard-drawer dt { color: #667085; } .dashboard-drawer dd { font-weight: 700; text-align: right; }
+  .drawer-action { width: 100%; margin-top: 0.9rem; }
+  .dashboard-toast { position: absolute; z-index: 9; right: 1rem; bottom: 1rem; max-width: 18rem; border-radius: 6px; padding: 0.55rem 0.7rem; background: #071a4d; color: #fff; font-size: 0.52rem; opacity: 0; transform: translateY(8px); transition: opacity 220ms var(--ease-out-quart), transform 220ms var(--ease-out-quart); pointer-events: none; }
+  .dashboard-toast.show { opacity: 1; transform: translateY(0); }
+  .coded-dashboard { background: linear-gradient(135deg, #0b319a, #5680ef 58%, #dbe6ff); }
+  .dashboard-icon-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+  .product-dashboard svg { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .coded-dashboard .product-dashboard { position: relative; background: radial-gradient(circle at 76% 10%, rgb(255 255 255 / 0.52), transparent 30%), rgb(255 255 255 / 0.46); backdrop-filter: blur(24px) saturate(140%); }
+  .coded-dashboard .product-sidebar { border-color: rgb(255 255 255 / 0.22); background: linear-gradient(180deg, rgb(8 24 72 / 0.68), rgb(7 26 77 / 0.78)); box-shadow: inset -1px 0 rgb(255 255 255 / 0.1), 14px 0 40px rgb(7 26 77 / 0.12); backdrop-filter: blur(24px) saturate(140%); }
+  .coded-dashboard .product-main { background: rgb(247 249 255 / 0.42); backdrop-filter: blur(24px) saturate(140%); }
+  .coded-dashboard .product-header { border-color: rgb(255 255 255 / 0.34); background: rgb(255 255 255 / 0.48); box-shadow: inset 0 -1px rgb(23 68 200 / 0.08); backdrop-filter: blur(24px) saturate(140%); }
+  .product-header > svg, .product-header label svg { flex: none; width: 0.78rem; height: 0.78rem; color: #1744c8; }
+  .product-nav-group nav { gap: 0.12rem; }
+  .product-nav-group nav span, .product-nav-group nav button { display: flex; align-items: center; gap: 0.55rem; width: 100%; border-radius: 6px; padding: 0.42rem 0.5rem; color: rgb(255 255 255 / 0.47); font-size: 0.62rem; text-align: left; }
+  .product-nav-group nav svg { flex: none; width: 0.8rem; height: 0.8rem; }
+  .product-nav-group nav span { cursor: default; }
+  .product-nav-group nav button.active { background: rgb(255 255 255 / 0.92); color: #071a4d; box-shadow: 0 7px 18px rgb(0 0 0 / 0.12); }
+  .product-nav-group nav button.active:hover { background: #fff; }
+  .coded-dashboard .product-content { padding: 0.8rem; }
+  .coded-dashboard .overview-metrics { margin-top: 0.6rem; gap: 0.4rem; }
+  .coded-dashboard .overview-metrics article, .coded-dashboard .product-chart-card, .coded-dashboard .highest-usage, .credit-user-table {
+    border-color: rgb(255 255 255 / 0.42);
+    background: linear-gradient(145deg, rgb(255 255 255 / 0.74), rgb(255 255 255 / 0.55));
+    box-shadow: inset 0 1px rgb(255 255 255 / 0.72), 0 12px 30px rgb(18 50 130 / 0.1);
+    backdrop-filter: blur(24px) saturate(140%);
+  }
+  .overview-metrics article { position: relative; grid-template-columns: 1fr auto; }
+  .overview-metrics article > svg { grid-column: 2; grid-row: 1 / 3; width: 1rem; height: 1rem; border-radius: 6px; padding: 0.28rem; box-sizing: content-box; background: rgb(23 68 200 / 0.08); color: #1744c8; }
+  .overview-metrics article > small, .overview-metrics article > b, .overview-metrics article > span { grid-column: 1; }
+  .dashboard-actions button, .drawer-action { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .dashboard-actions button svg, .drawer-action svg { width: 0.68rem; height: 0.68rem; }
+  .coded-dashboard .product-chart-card, .coded-dashboard .highest-usage, .coded-dashboard .credit-user-table { padding: 0; }
+  .coded-dashboard .product-chart-card, .coded-dashboard .highest-usage { margin-top: 0.55rem; }
+  .coded-dashboard .product-chart-head { border-color: rgb(23 68 200 / 0.13); }
+  .coded-dashboard .product-chart { height: 8.75rem; }
+  .spend-controls-card { display: flex; flex-direction: column; }
+  .control-health, .control-stat { display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 0.7rem; border-bottom: 1px solid rgb(23 68 200 / 0.1); }
+  .control-health > div, .control-stat > div { display: grid; gap: 0.12rem; }
+  .control-health b, .control-stat b { color: #071a4d; font-size: 0.56rem; }
+  .control-health small, .control-stat small { color: #667085; font-size: 0.46rem; }
+  .control-icon, .control-stat > span { display: grid; place-items: center; flex: none; width: 1.8rem; height: 1.8rem; border-radius: 50%; background: rgb(18 183 106 / 0.12); color: #0b8d52; font-family: var(--font-mono); font-size: 0.6rem; font-weight: 800; }
+  .control-icon svg { width: 1rem; height: 1rem; }
+  .control-stat > span { background: rgb(23 68 200 / 0.1); color: #1744c8; }
+  .credit-user-table { margin-top: 0.55rem; border: 1px solid rgb(23 68 200 / 0.16); border-radius: 9px; overflow: hidden; }
+  .credit-user-head, .credit-user-row { display: grid; grid-template-columns: minmax(13rem, 2fr) 0.55fr 0.8fr 0.8fr 0.55fr 0.9fr 0.5fr; gap: 0.4rem; align-items: center; padding: 0.42rem 0.65rem; }
+  .credit-user-head { border-bottom: 1px solid rgb(23 68 200 / 0.14); background: rgb(235 241 255 / 0.56); color: #667085; font-size: 0.44rem; font-weight: 700; }
+  .credit-user-row { width: 100%; border-bottom: 1px solid rgb(23 68 200 / 0.1); color: #344054; font-size: 0.49rem; text-align: left; transition: background 160ms ease, transform 160ms ease; }
+  .credit-user-row:last-child { border-bottom: 0; }
+  .credit-user-row:hover { background: rgb(255 255 255 / 0.7); }
+  .credit-user-row > span:first-child { display: flex; align-items: center; gap: 0.45rem; min-width: 0; }
+  .credit-user-row i { display: grid; place-items: center; flex: none; width: 1.45rem; height: 1.45rem; border-radius: 50%; background: #1744c8; color: #fff; font-size: 0.44rem; font-style: normal; font-weight: 800; }
+  .credit-user-row b { display: grid; min-width: 0; color: #071a4d; font-size: 0.49rem; }
+  .credit-user-row small { overflow: hidden; color: #667085; font-size: 0.42rem; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+  .credit-user-row strong { color: #12b76a; font-family: var(--font-mono); font-size: 0.48rem; }
+  .credit-user-row strong.danger, .credit-user-row em.reached { color: #d92d20; }
+  .credit-user-row strong.warning, .credit-user-row em.warning { color: #b54708; }
+  .credit-user-row em { width: fit-content; border-radius: 999px; padding: 0.16rem 0.32rem; background: rgb(18 183 106 / 0.1); color: #087443; font-size: 0.42rem; font-style: normal; font-weight: 750; }
+  .credit-user-row em.reached { background: rgb(240 68 56 / 0.1); }
+  .credit-user-row em.warning { background: rgb(247 144 9 / 0.12); }
+  .coded-dashboard .dashboard-drawer { border-color: rgb(255 255 255 / 0.48); background: linear-gradient(150deg, rgb(255 255 255 / 0.86), rgb(235 242 255 / 0.68)); box-shadow: -20px 0 50px rgb(7 26 77 / 0.18), inset 1px 0 rgb(255 255 255 / 0.8); backdrop-filter: blur(28px) saturate(145%); }
+  .dashboard-drawer > p { margin-top: 0.15rem; color: #667085; font-size: 0.5rem; }
+  .drawer-close { display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: rgb(23 68 200 / 0.07); }
+  .drawer-close svg { width: 0.72rem; height: 0.72rem; }
+  .blocked-modal { position: absolute; z-index: 10; inset: 0; display: grid; place-items: center; padding: 1rem; background: rgb(7 26 77 / 0.2); opacity: 0; visibility: hidden; transition: opacity 240ms ease, visibility 240ms ease; backdrop-filter: blur(7px); }
+  .blocked-modal.open { opacity: 1; visibility: visible; }
+  .blocked-log { position: relative; width: min(38rem, 94%); border: 1px solid rgb(255 255 255 / 0.58); border-radius: 12px; padding: 1rem; background: linear-gradient(145deg, rgb(255 255 255 / 0.88), rgb(235 242 255 / 0.7)); box-shadow: 0 24px 60px rgb(7 26 77 / 0.25), inset 0 1px rgb(255 255 255 / 0.9); backdrop-filter: blur(28px) saturate(145%); }
+  .blocked-log-icon { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 8px; background: rgb(240 68 56 / 0.1); color: #d92d20; }
+  .blocked-log-icon svg { width: 1rem; height: 1rem; }
+  .blocked-log h4 { margin-top: 0.6rem; font-size: 0.8rem; }
+  .blocked-log > p { margin: 0.15rem 0 0.8rem; color: #667085; font-size: 0.52rem; }
+  .blocked-log-head, .blocked-log-row { display: grid; grid-template-columns: 1.3fr 1fr 1.2fr 0.6fr; gap: 0.5rem; padding: 0.5rem; border-bottom: 1px solid rgb(23 68 200 / 0.1); font-size: 0.48rem; }
+  .blocked-log-head { border-radius: 6px; background: rgb(23 68 200 / 0.06); color: #667085; font-weight: 750; }
+  .blocked-log-row span:nth-child(3) { color: #d92d20; }
+  .coded-dashboard { border-radius: 22px; background: linear-gradient(140deg, #254fca 0%, #8e8af2 48%, #f3cc82 100%); box-shadow: 0 34px 90px rgb(7 26 77 / 0.28), 0 0 0 1px rgb(255 255 255 / 0.16); }
+  .coded-dashboard .dashboard-frame-bar { position: relative; z-index: 5; background: rgb(7 26 77 / 0.62); backdrop-filter: blur(28px) saturate(150%); }
+  .coded-dashboard .product-dashboard::before, .coded-dashboard .product-dashboard::after { position: absolute; z-index: 0; border-radius: 50%; filter: blur(45px); content: ''; pointer-events: none; }
+  .coded-dashboard .product-dashboard::before { top: -18%; right: 4%; width: 18rem; height: 18rem; background: rgb(112 91 255 / 0.28); }
+  .coded-dashboard .product-dashboard::after { bottom: -28%; left: 22%; width: 22rem; height: 22rem; background: rgb(255 207 105 / 0.24); }
+  .coded-dashboard .product-sidebar, .coded-dashboard .product-main { position: relative; z-index: 1; }
+  .coded-dashboard .product-sidebar { margin: 0.55rem 0 0.55rem 0.55rem; min-height: calc(100% - 1.1rem); border: 1px solid rgb(255 255 255 / 0.2); border-radius: 16px; padding: 0.7rem; background: linear-gradient(165deg, rgb(8 24 72 / 0.66), rgb(22 42 104 / 0.5)); box-shadow: inset 0 1px rgb(255 255 255 / 0.16), 0 20px 48px rgb(7 26 77 / 0.22); }
+  .product-user { border: 1px solid rgb(255 255 255 / 0.12); border-radius: 12px; padding: 0.55rem; background: rgb(255 255 255 / 0.07); }
+  .product-avatar { width: 1.9rem; height: 1.9rem; background: linear-gradient(145deg, #fff, #b9caff); color: #1744c8; box-shadow: 0 8px 18px rgb(0 0 0 / 0.18); }
+  .product-nav-group { margin-top: 0.85rem; }
+  .product-nav-group > small { padding-left: 0.45rem; color: rgb(255 255 255 / 0.35); letter-spacing: 0.12em; text-transform: uppercase; }
+  .product-nav-group nav { margin-top: 0.3rem; gap: 0.18rem; }
+  .product-nav-group nav span, .product-nav-group nav button { border-radius: 10px; padding: 0.5rem 0.55rem; }
+  .product-nav-group nav span { color: rgb(255 255 255 / 0.4); }
+  .product-nav-group nav button.active { background: linear-gradient(135deg, rgb(255 255 255 / 0.98), rgb(223 231 255 / 0.86)); box-shadow: inset 0 1px rgb(255 255 255), 0 12px 25px rgb(0 0 0 / 0.18); }
+  .product-nav-group nav svg { width: 0.9rem; height: 0.9rem; }
+  .product-plan { margin-top: auto; border: 1px solid rgb(255 255 255 / 0.14); border-radius: 12px; padding: 0.6rem; background: rgb(255 255 255 / 0.08); }
+  .coded-dashboard .product-main { margin: 0.55rem; border: 1px solid rgb(255 255 255 / 0.32); border-radius: 17px; overflow: hidden; background: rgb(248 250 255 / 0.38); box-shadow: inset 0 1px rgb(255 255 255 / 0.58), 0 24px 60px rgb(31 51 115 / 0.16); }
+  .coded-dashboard .product-header { height: 2.8rem; border: 0; background: rgb(255 255 255 / 0.22); box-shadow: inset 0 -1px rgb(255 255 255 / 0.32); }
+  .product-header label { border-color: rgb(255 255 255 / 0.52); border-radius: 999px; background: rgb(255 255 255 / 0.38); box-shadow: inset 0 1px rgb(255 255 255 / 0.7); }
+  .coded-dashboard .product-content { padding: 0.8rem 0.9rem 1rem; }
+  .overview-heading { padding-inline: 0.1rem; }
+  .overview-heading h3 { font-size: 1.08rem; letter-spacing: -0.035em; }
+  .dashboard-actions button, .drawer-action { border-radius: 999px; padding: 0.4rem 0.62rem; box-shadow: 0 7px 16px rgb(23 68 200 / 0.14); }
+  .dashboard-actions button:first-child { border-color: rgb(255 255 255 / 0.62); background: rgb(255 255 255 / 0.52); }
+  .coded-dashboard .overview-metrics { grid-template-columns: repeat(5, 1fr); gap: 0.55rem; margin-top: 0.75rem; }
+  .coded-dashboard .overview-metrics article, .coded-dashboard .overview-metrics article:nth-child(n) { grid-column: auto; min-height: 5.15rem; border-radius: 15px; padding: 0.78rem; }
+  .overview-metrics article > svg { width: 1.05rem; height: 1.05rem; border-radius: 9px; padding: 0.38rem; background: linear-gradient(145deg, rgb(255 255 255 / 0.82), rgb(210 222 255 / 0.5)); box-shadow: inset 0 1px rgb(255 255 255), 0 8px 16px rgb(23 68 200 / 0.12); }
+  .overview-metrics b { margin-top: 0.18rem; font-size: 1.05rem; }
+  .usage-product-grid { gap: 0.7rem; margin-top: 0.75rem; }
+  .coded-dashboard .product-chart-card, .coded-dashboard .highest-usage { margin-top: 0; border-radius: 16px; box-shadow: inset 0 1px rgb(255 255 255 / 0.85), 0 18px 42px rgb(24 47 117 / 0.13); }
+  .coded-dashboard .product-chart-head { border: 0; padding: 0.75rem 0.85rem 0.45rem; }
+  .coded-dashboard .product-chart { height: 7.9rem; }
+  .chart-filters { border: 1px solid rgb(255 255 255 / 0.58); border-radius: 999px; padding: 0.15rem; background: rgb(255 255 255 / 0.38); }
+  .chart-filters button { border: 0; border-radius: 999px; padding-inline: 0.5rem; background: transparent; }
+  .chart-filters button.active { box-shadow: 0 6px 14px rgb(23 68 200 / 0.18); }
+  .chart-grid-lines i { border-color: rgb(23 68 200 / 0.08); }
+  .threshold-line { border-color: rgb(240 68 56 / 0.45); }
+  .control-health, .control-stat { margin: 0.25rem 0.65rem; border: 0; border-radius: 12px; padding: 0.62rem; background: rgb(255 255 255 / 0.38); box-shadow: inset 0 1px rgb(255 255 255 / 0.65); }
+  .control-icon, .control-stat > span { width: 2rem; height: 2rem; box-shadow: 0 8px 18px rgb(23 68 200 / 0.1); }
+  .credit-user-table { display: grid; gap: 0.3rem; margin-top: 0.75rem; border: 0; border-radius: 16px; padding: 0.5rem; background: rgb(255 255 255 / 0.36); box-shadow: inset 0 1px rgb(255 255 255 / 0.7), 0 18px 42px rgb(24 47 117 / 0.12); }
+  .credit-user-head { border: 0; border-radius: 10px; padding-block: 0.36rem; background: rgb(255 255 255 / 0.28); }
+  .credit-user-row { border: 1px solid rgb(255 255 255 / 0.5); border-radius: 12px; padding-block: 0.5rem; background: rgb(255 255 255 / 0.48); box-shadow: inset 0 1px rgb(255 255 255 / 0.7); }
+  .credit-user-row:last-child { border: 1px solid rgb(255 255 255 / 0.5); }
+  .credit-user-row:hover { background: rgb(255 255 255 / 0.78); box-shadow: inset 0 1px #fff, 0 10px 22px rgb(23 68 200 / 0.12); transform: translateY(-1px); }
+  .credit-user-row i { width: 1.65rem; height: 1.65rem; background: linear-gradient(145deg, #1744c8, #7895ef); box-shadow: 0 7px 14px rgb(23 68 200 / 0.2); }
+  .credit-user-row em { border: 1px solid rgb(18 183 106 / 0.14); border-radius: 999px; padding: 0.2rem 0.4rem; }
+  .credit-user-row em.reached { border-color: rgb(240 68 56 / 0.14); }
+  .credit-user-row em.warning { border-color: rgb(247 144 9 / 0.16); }
+  .dash-rail { padding: 1.2rem; background: var(--blue-deep); color: var(--white); display: flex; flex-direction: column; min-height: 35rem; }
+  .dash-rail nav { display: grid; gap: 0.35rem; margin-top: 2rem; }
+  .dash-rail nav span { padding: 0.5rem 0.65rem; border-radius: 5px; color: var(--mist); font-size: 0.78rem; }
+  .dash-rail nav .active { background: var(--white); color: var(--blue); font-weight: 700; }
+  .rail-project { display: grid; margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--hairline-on-blue); }
+  .rail-project small, .rail-project code { color: var(--mist); font-size: 0.64rem; }
+  .dash-title button { margin-left: auto; }
+  .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--hairline-on-paper); }
+  .metric-grid article { display: grid; padding: 1rem; border-right: 1px solid var(--hairline-on-paper); }
+  .metric-grid article:last-child { border: 0; } .metric-grid small, .metric-grid span { color: var(--ink-soft); font-size: 0.66rem; }
+  .metric-grid b { font-size: 1.25rem; margin-block: 0.25rem; }
+  .metric-grid i { height: 4px; margin-top: 0.8rem; background: linear-gradient(90deg, var(--blue) var(--used), var(--hairline-on-paper) var(--used)); }
+  .usage-grid { display: grid; grid-template-columns: 1.3fr 0.9fr; }
+  .usage-chart, .user-table { padding: 1.2rem; } .usage-chart { border-right: 1px solid var(--hairline-on-paper); }
+  .chart-head { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.75rem; } .chart-head span { color: var(--ink-soft); }
+  .bars { height: 13rem; display: flex; align-items: end; gap: 0.45rem; margin-top: 1.2rem; border-bottom: 1px solid var(--hairline-on-paper); background: repeating-linear-gradient(to bottom, transparent 0 3.2rem, var(--hairline-on-paper) 3.2rem calc(3.2rem + 1px)); }
+  .bars i { flex: 1; height: var(--h); background: var(--blue); min-width: 3px; }
+  .chart-axis { display: flex; justify-content: space-between; color: var(--ink-soft); font-size: 0.62rem; margin-top: 0.35rem; }
+  .user-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.65rem; padding-block: 0.9rem; border-bottom: 1px solid var(--hairline-on-paper); }
+  .avatar { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--blue); color: var(--white); font-size: 0.65rem; font-weight: 700; }
+  .user-row span:nth-child(2) { display: grid; line-height: 1.2; min-width: 0; } .user-row b { font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .user-row small { color: var(--ink-soft); font-size: 0.62rem; } .user-row strong { font-size: 0.72rem; }
+  .limit-row { display: flex; align-items: center; gap: 0.5rem; padding-top: 1rem; font-size: 0.67rem; } .limit-row code { margin-left: auto; color: var(--ink-soft); }
+
+  .flow-map { position: relative; display: grid; grid-template-columns: repeat(6, 1fr); margin-top: 4rem; border: 1px solid var(--hairline-on-paper); overflow: hidden; }
+  .flow-step { position: relative; display: grid; justify-items: center; text-align: center; gap: 0.35rem; padding: 1.4rem 0.7rem; border-right: 1px solid var(--hairline-on-paper); opacity: 0.3; transition: opacity 420ms var(--ease-out-quart), background-color 420ms var(--ease-out-quart), color 420ms var(--ease-out-quart), box-shadow 420ms var(--ease-out-quart), transform 420ms var(--ease-out-expo); }
+  .flow-step:last-child { border: 0; } .flow-step::after { content: '→'; position: absolute; right: -0.55rem; top: 46%; z-index: 2; color: var(--blue); background: var(--white); padding: 0.1rem; }
+  .flow-step:last-child::after { display: none; } .flow-step.core { background: var(--white); color: var(--ink); }
+  .flow-step.is-complete { opacity: 0.72; }
+  .flow-step.is-active { opacity: 1; background: var(--blue); color: var(--white); transform: translateY(-8px); box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.28), 0 16px 34px oklch(0.42 0.19 264 / 0.24); }
+  .flow-step.is-blocked { opacity: 1; background: oklch(0.48 0.19 25); color: var(--white); box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.25), 0 0 26px oklch(0.48 0.19 25 / 0.22); }
+  .flow-step > span { justify-self: start; font-family: var(--font-mono); font-size: 0.62rem; color: var(--ink-soft); } .flow-step.is-active > span, .flow-step.is-active small, .flow-step.is-blocked > span, .flow-step.is-blocked small { color: var(--mist); }
+  .flow-icon { display: grid; place-items: center; width: 3rem; height: 3rem; margin-block: 0.5rem; border: 1px solid var(--hairline-on-paper); border-radius: 50%; font-family: var(--font-mono); font-weight: 700; color: var(--blue); }
+  .flow-step.is-active .flow-icon, .flow-step.is-blocked .flow-icon { background: var(--white); border-color: var(--white); box-shadow: 0 0 0 6px oklch(1 0 0 / 0.12), 0 0 18px oklch(1 0 0 / 0.28); }
+  .flow-step b { font-size: 0.82rem; } .flow-step small { color: var(--ink-soft); font-size: 0.64rem; min-height: 2.6em; max-width: 18ch; }
+  .revenue-packet { position: absolute; z-index: 5; top: 0.7rem; left: calc(100% / 12); display: grid; min-width: 8.5rem; padding: 0.45rem 0.6rem; border-radius: 6px; background: var(--white); color: var(--blue); border: 1px solid var(--blue); box-shadow: 0 8px 25px oklch(0.42 0.19 264 / 0.2); opacity: 0; transform: translate3d(calc(var(--token-x, 0px) - 50%), 0, 0); transition: transform 680ms var(--ease-out-expo), opacity 220ms var(--ease-out-quart), border-color 250ms var(--ease-out-quart), color 250ms var(--ease-out-quart); pointer-events: none; }
+  .revenue-packet span { font-family: var(--font-mono); font-size: 0.5rem; opacity: 0.65; }
+  .revenue-packet b { font-size: 0.65rem; white-space: nowrap; }
+  .flow-map.is-traveling .revenue-packet { opacity: 1; }
+  .flow-map.is-streaming .revenue-packet { opacity: 1; }
+  .flow-map[data-scenario='blocked'] .revenue-packet { color: oklch(0.48 0.19 25); border-color: oklch(0.58 0.2 25); }
+  .flow-narration { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 1rem; min-height: 4.6rem; padding: 0.9rem 1rem; border-inline: 1px solid var(--hairline-on-paper); background: oklch(0.42 0.19 264 / 0.055); }
+  .flow-narration span { border-radius: var(--radius-pill); background: var(--blue); color: var(--white); padding: 0.3rem 0.65rem; font-family: var(--font-mono); font-size: 0.62rem; white-space: nowrap; }
+  .flow-narration strong { font-size: 0.9rem; }
+  .flow-narration.is-blocked { background: oklch(0.58 0.2 25 / 0.07); }
+  .flow-narration.is-blocked span { background: oklch(0.48 0.19 25); }
+  .flow-console { display: flex; align-items: center; gap: 0.7rem; padding: 0.8rem 1rem; background: var(--blue-deep); color: var(--mist); overflow-x: auto; white-space: nowrap; }
+  .flow-console code, .flow-console strong { font-size: 0.65rem; min-width: 7.5rem; } .flow-console i { width: 2rem; border-top: 1px dashed var(--hairline-on-blue); } .flow-console strong { color: var(--white); min-width: 9rem; }
+  .flow-console.is-blocked .ok-dot { background: oklch(0.62 0.19 25); }
+  .flow-console.is-blocked strong { color: oklch(0.83 0.1 25); }
+
+  .reverse { grid-template-columns: 1.08fr 0.92fr; }
+  .github-card { border-color: var(--hairline-on-blue); }
+  .pr-head { justify-content: flex-start; } .pr-head .status-pill { margin-left: auto; } .pr-head .provider-mark { border-radius: 6px; }
+  .commit { display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1rem; border-bottom: 1px solid var(--hairline-on-paper); font-size: 0.67rem; } .commit span:nth-child(3) { color: var(--ink-soft); } .commit strong { margin-left: auto; }
+  .check-list { list-style: none; padding: 0.7rem 1rem; } .check-list li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--hairline-on-paper); }
+  .check-list li > span { color: oklch(0.48 0.15 155); font-weight: 800; } .check-list div { display: grid; line-height: 1.3; } .check-list b { font-size: 0.78rem; } .check-list small, .check-list code { color: var(--ink-soft); font-size: 0.64rem; }
+  .pr-footer { display: flex; align-items: center; padding: 1rem; font-weight: 700; font-size: 0.75rem; } .pr-footer button { margin-left: auto; }
+  .terminal-stack { display: grid; gap: 0.65rem; padding: 1rem; border-top: 1px solid var(--hairline-on-blue); }
+  .terminal-stack span { display: flex; align-items: center; gap: 0.65rem; } .terminal-stack code { font-size: 0.67rem; }
+  .setup-demo .github-card, .setup-demo .code-card { position: relative; }
+  .setup-demo .status-pill, .setup-demo .pr-footer span { transition: color 280ms var(--ease-out-quart), background-color 280ms var(--ease-out-quart), border-color 280ms var(--ease-out-quart), box-shadow 280ms var(--ease-out-quart); }
+  .setup-demo .status-pill.is-live { border-color: oklch(0.65 0.18 155); background: oklch(0.95 0.05 155); color: oklch(0.42 0.14 155); box-shadow: 0 0 18px oklch(0.65 0.18 155 / 0.25); }
+  .setup-demo .check-list li { opacity: 0.45; transition: opacity 300ms var(--ease-out-quart), background-color 300ms var(--ease-out-quart), box-shadow 300ms var(--ease-out-quart), transform 300ms var(--ease-out-quart); }
+  .setup-demo .check-list li > span { display: grid; place-items: center; width: 1.4rem; height: 1.4rem; border-radius: 50%; background: oklch(0.94 0.02 155); color: transparent; transform: scale(0.82); transition: color 260ms var(--ease-out-back), background-color 260ms var(--ease-out-quart), box-shadow 260ms var(--ease-out-quart), transform 260ms var(--ease-out-back); }
+  .setup-demo .check-list li.is-active { opacity: 1; background: oklch(0.42 0.19 264 / 0.055); box-shadow: inset 3px 0 0 var(--blue), 0 8px 22px oklch(0.42 0.19 264 / 0.1); transform: translateX(3px); }
+  .setup-demo .check-list li.is-complete { opacity: 0.8; }
+  .setup-demo .check-list li.is-complete > span, .setup-demo .check-list li.is-active > span { background: oklch(0.9 0.08 155); color: oklch(0.42 0.14 155); box-shadow: 0 0 14px oklch(0.65 0.18 155 / 0.28); transform: scale(1); }
+  .setup-demo .code-card pre { min-height: 20rem; }
+  .setup-code-line { display: inline-block; width: fit-content; margin-inline: -0.35rem; padding-inline: 0.35rem; border-radius: 4px; opacity: 0.48; transition: opacity 300ms var(--ease-out-quart), color 300ms var(--ease-out-quart), background-color 300ms var(--ease-out-quart), box-shadow 300ms var(--ease-out-quart), transform 300ms var(--ease-out-quart); }
+  .setup-code-line.is-active { opacity: 1; background: oklch(0.72 0.14 155 / 0.12); box-shadow: inset 2px 0 0 oklch(0.72 0.14 155), 0 0 20px oklch(0.72 0.14 155 / 0.13); transform: translateX(3px); }
+  .setup-code-line.is-complete { opacity: 0.78; }
+  .setup-demo .terminal-stack span { opacity: 0.32; transform: translateX(-4px); transition: opacity 300ms var(--ease-out-quart), transform 300ms var(--ease-out-quart), color 300ms var(--ease-out-quart); }
+  .setup-demo .terminal-stack span.is-active, .setup-demo .terminal-stack span.is-complete { opacity: 1; transform: translateX(0); }
+  .setup-demo .terminal-stack span.is-active { color: oklch(0.86 0.13 155); }
+  .setup-demo .terminal-stack span:not(.is-active):not(.is-complete) .ok-dot { background: oklch(1 0 0 / 0.25); box-shadow: none; }
+  .setup-demo .pr-footer span.is-verified { color: oklch(0.42 0.14 155); }
+
+  @media (max-width: 980px) {
+    .section-copy, .code-result { grid-template-columns: 1fr; }
+    .architecture-map { grid-template-columns: 1fr; gap: 1rem; }
+    .architecture-connectors, .arch-lines { display: none; }
+    .arch-side { grid-template-columns: 1fr 1fr; }
+    .arch-outputs { grid-template-columns: repeat(3, 1fr); }
+    .arch-inputs::after, .control-plane::after { content: ''; position: absolute; z-index: 3; left: 50%; bottom: -1rem; width: 1px; height: 1rem; border-left: 1px dashed var(--blue); transform: translateX(-50%); pointer-events: none; }
+    .map-label { grid-column: 1 / -1; } .control-plane { box-shadow: 8px 8px 0 var(--blue-deep); }
+    .tier-grid { grid-template-columns: 1fr; }
+    .tier-card { border-right: 0; border-bottom: 1px solid var(--hairline-on-paper); }
+    .tier-card:last-child { border-bottom: 0; }
+    .policy-footer { align-items: flex-start; flex-direction: column; }
+    .policy-cursor { left: 38%; }
+    .tier-engine.is-cursor-at-button .policy-cursor { top: 1.1rem; left: calc(100% - 5rem); }
+    .meter-dashboard { grid-template-columns: 1fr; } .dash-rail { min-height: auto; flex-direction: row; align-items: center; gap: 1rem; } .dash-rail nav { display: flex; margin: 0 0 0 auto; } .rail-project { display: none; }
+    .metric-grid { grid-template-columns: 1fr 1fr; } .metric-grid article:nth-child(2) { border-right: 0; } .metric-grid article:nth-child(-n+2) { border-bottom: 1px solid var(--hairline-on-paper); }
+    .flow-map { grid-template-columns: repeat(3, 1fr); } .flow-step:nth-child(3) { border-right: 0; } .flow-step:nth-child(-n+3) { border-bottom: 1px solid var(--hairline-on-paper); }
+    .model-connector { display: none; }
+    .revenue-packet { display: none; }
+  }
+
+  @media (max-width: 680px) {
+    .arch-side, .arch-outputs, .tier-grid, .metric-grid, .usage-grid, .flow-map { grid-template-columns: 1fr; }
+    .plane-grid { grid-template-columns: 1fr; } .control-plane { box-shadow: none; }
+    .tier-card { border-right: 0; border-bottom: 1px solid var(--hairline-on-paper); } .tier-card:last-child { border-bottom: 0; }
+    .policy-footer, .tier-toolbar { flex-wrap: wrap; } .policy-footer strong { margin-left: 0; width: 100%; }
+    .dash-rail nav { display: none; } .dash-main { min-width: 0; } .metric-grid article { border-right: 0; border-bottom: 1px solid var(--hairline-on-paper); }
+    .usage-chart { border-right: 0; border-bottom: 1px solid var(--hairline-on-paper); } .bars { gap: 0.25rem; }
+    .flow-step { border-right: 0; border-bottom: 1px solid var(--hairline-on-paper); } .flow-step::after { display: none; }
+    .provider-list li { grid-template-columns: auto 1fr auto; } .provider-tier { display: none; }
+    .dashboard-frame-bar { min-height: 2.35rem; padding: 0.5rem 0.6rem; }
+    .frame-address { font-size: 0.55rem; }
+    .frame-live { display: none; }
+    .product-dashboard { grid-template-columns: 10rem minmax(48rem, 1fr); min-height: 36rem; }
+    .product-main { min-width: 48rem; }
+    .coded-dashboard { aspect-ratio: 16 / 10; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .plane-head .signal, .connector-pulse, .model-connector span { animation: none !important; }
+    .architecture-map .arch-node, .architecture-map .plane-grid div { opacity: 1; transform: none; }
+    .provider-list li { opacity: 1; transform: none; }
+    .flow-step { opacity: 1; }
+    .revenue-packet { display: none; }
+    .setup-demo .check-list li, .setup-demo .check-list li > span, .setup-code-line, .setup-demo .terminal-stack span { transition: none; transform: none; }
+    .metering .coded-dashboard:has(.replacement-dashboard), .metering .coded-dashboard:has(.replacement-dashboard)::before { animation: none !important; }
+    .policy-cursor { display: none; }
+    .policy-footer::after { animation: none !important; opacity: 0 !important; }
+  }
+</style>
+
+<script>
+  const policyRoot = document.getElementById('policy-engine');
+
+  if (policyRoot) {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const publishButton = policyRoot.querySelector<HTMLElement>('[data-policy-bind="button"]')!;
+    const deployStatus = policyRoot.querySelector<HTMLElement>('[data-policy-bind="deploy"]')!;
+    const cards = [...policyRoot.querySelectorAll<HTMLElement>('[data-policy-plan]')];
+    const footerItems = [...policyRoot.querySelectorAll<HTMLElement>('[data-policy-footer]')];
+    const badges = cards.map((card) => card.querySelector<HTMLElement>('[data-policy-bind="badge"]')!);
+    const creditValues = cards.map((card) => card.querySelector<HTMLElement>('dl div:first-child dd')!);
+    const creditTargets = [20, 200, 1000];
+    let timers: ReturnType<typeof setTimeout>[] = [];
+    let observer: IntersectionObserver | undefined;
+    let hasPlayed = false;
+
+    const schedule = (callback: () => void, delay: number) => timers.push(setTimeout(callback, delay));
+    const countCredits = (index: number) => {
+      const value = creditValues[index];
+      const target = creditTargets[index];
+      const started = performance.now();
+      const tick = (now: number) => {
+        const progress = Math.min((now - started) / 800, 1);
+        value.textContent = Math.round(target * (1 - Math.pow(1 - progress, 3))).toLocaleString();
+        if (progress < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    const finishPolicy = () => {
+      policyRoot.classList.remove('is-ready', 'is-publishing', 'is-propagating');
+      policyRoot.classList.add('is-visible', 'is-live');
+      publishButton.textContent = 'Enforcement live';
+      deployStatus.textContent = 'Free locked · Pro + Max operating';
+      cards[0]?.classList.remove('is-active', 'is-operating');
+      cards[0]?.classList.add('is-complete', 'is-locked');
+      badges[0].textContent = '🔒 Limit reached';
+      cards.slice(1).forEach((card) => {
+        card.classList.remove('is-active');
+        card.classList.add('is-complete', 'is-operating');
+      });
+      badges[1].textContent = '✓ Active';
+      badges[2].textContent = '✓ Active';
+      footerItems.forEach((item) => item.classList.add('is-complete'));
+    };
+    const runPolicy = () => {
+      if (hasPlayed) return;
+      hasPlayed = true;
+      creditValues.forEach((value) => (value.textContent = '0'));
+      policyRoot.classList.add('is-visible');
+      schedule(() => {
+        policyRoot.classList.add('is-ready', 'is-cursor-at-button');
+        publishButton.textContent = 'Publish changes';
+      }, 350);
+      schedule(() => {
+        policyRoot.classList.add('is-cursor-clicking');
+        publishButton.classList.add('is-pressed');
+      }, 1350);
+      schedule(() => {
+        policyRoot.classList.remove('is-cursor-clicking');
+        publishButton.classList.remove('is-pressed');
+        publishButton.textContent = 'Billing active';
+        footerItems[0]?.classList.add('is-active');
+      }, 1580);
+      schedule(() => {
+        policyRoot.classList.remove('is-ready');
+        policyRoot.classList.add('is-publishing', 'is-propagating');
+        publishButton.textContent = 'Checking access...';
+        deployStatus.textContent = 'Billing verified → applying access policy';
+        footerItems[0]?.classList.remove('is-active');
+        footerItems[0]?.classList.add('is-complete');
+        footerItems[1]?.classList.add('is-active');
+      }, 2150);
+      schedule(() => {
+        policyRoot.classList.remove('is-publishing');
+        cards[0]?.classList.add('is-active');
+        badges[0].textContent = 'Monitoring';
+        countCredits(0);
+        deployStatus.textContent = 'Free usage climbing toward 20 credits';
+      }, 3150);
+      schedule(() => {
+        cards[0]?.classList.remove('is-active');
+        cards[0]?.classList.add('is-complete', 'is-locked');
+        badges[0].textContent = '🔒 Limit reached';
+        cards[0]!.querySelector<HTMLElement>('[data-policy-bind="plan-status"]')!.textContent = 'Limit enforced';
+        footerItems[1]?.classList.remove('is-active');
+        footerItems[1]?.classList.add('is-complete');
+        footerItems[2]?.classList.add('is-active');
+        deployStatus.textContent = 'Free limit reached · access locked';
+        publishButton.textContent = 'Limit enforced';
+      }, 4250);
+      schedule(() => {
+        cards[1]?.classList.add('is-active', 'is-operating');
+        badges[1].textContent = '✓ Active';
+        countCredits(1);
+        deployStatus.textContent = 'Pro subscription continues operating';
+      }, 5100);
+      schedule(() => {
+        cards[1]?.classList.remove('is-active');
+        cards[1]?.classList.add('is-complete');
+        cards[2]?.classList.add('is-active', 'is-operating');
+        badges[2].textContent = '✓ Active';
+        countCredits(2);
+        deployStatus.textContent = 'Max subscription continues operating';
+      }, 6200);
+      schedule(() => {
+        footerItems[2]?.classList.remove('is-active');
+        footerItems[2]?.classList.add('is-complete');
+        footerItems[3]?.classList.add('is-active');
+      }, 7050);
+      schedule(finishPolicy, 7800);
+    };
+
+    (window as any).__subscribeDevPolicyCleanup?.();
+    (window as any).__subscribeDevPolicyCleanup = () => {
+      timers.forEach(clearTimeout);
+      observer?.disconnect();
+    };
+
+    if (reduced) {
+      finishPolicy();
+    } else {
+      observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) runPolicy();
+      }, { threshold: 0.25 });
+      observer.observe(policyRoot);
+    }
+  }
+
+  const setupRoot = document.getElementById('setup-demo');
+
+  if (setupRoot) {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const steps = [...setupRoot.querySelectorAll<HTMLElement>('[data-setup-step]')];
+    const codeLines = [...setupRoot.querySelectorAll<HTMLElement>('[data-setup-code]')];
+    const statuses = [...setupRoot.querySelectorAll<HTMLElement>('[data-setup-status]')];
+    const assistantStatus = setupRoot.querySelector<HTMLElement>('[data-setup-bind="assistant-status"]')!;
+    const assistantFooter = setupRoot.querySelector<HTMLElement>('[data-setup-bind="assistant-footer"]')!;
+    let timers: ReturnType<typeof setTimeout>[] = [];
+    let observer: IntersectionObserver | undefined;
+    let playing = false;
+
+    const schedule = (callback: () => void, delay: number) => timers.push(setTimeout(callback, delay));
+    const resetSetup = () => {
+      [...steps, ...codeLines, ...statuses].forEach((item) => item.classList.remove('is-active', 'is-complete'));
+      assistantStatus.textContent = 'Ready';
+      assistantStatus.classList.remove('is-live');
+      assistantFooter.textContent = 'No backend required';
+      assistantFooter.classList.remove('is-verified');
+    };
+    const activateSetup = (index: number) => {
+      steps.forEach((step, stepIndex) => {
+        step.classList.toggle('is-active', stepIndex === index);
+        step.classList.toggle('is-complete', stepIndex < index);
+      });
+      codeLines.forEach((line, lineIndex) => {
+        line.classList.toggle('is-active', lineIndex === index);
+        line.classList.toggle('is-complete', lineIndex < index);
+      });
+    };
+    const completeSetup = () => {
+      steps.forEach((step) => { step.classList.remove('is-active'); step.classList.add('is-complete'); });
+      codeLines.forEach((line) => { line.classList.remove('is-active'); line.classList.add('is-complete'); });
+      statuses.forEach((status) => { status.classList.remove('is-active'); status.classList.add('is-complete'); });
+      assistantStatus.textContent = 'Live';
+      assistantStatus.classList.add('is-live');
+      assistantFooter.textContent = 'Stripe subscription tiers connected';
+      assistantFooter.classList.add('is-verified');
+    };
+    const stopSetup = () => {
+      playing = false;
+      timers.forEach(clearTimeout);
+      timers = [];
+      observer?.disconnect();
+      resetSetup();
+    };
+    (window as any).__subscribeDevSetupCleanup?.();
+    (window as any).__subscribeDevSetupCleanup = stopSetup;
+
+    const runSetup = () => {
+      if (!playing) return;
+      timers.forEach(clearTimeout);
+      timers = [];
+      resetSetup();
+
+      schedule(() => activateSetup(0), 550);
+      schedule(() => activateSetup(1), 2200);
+      schedule(() => {
+        statuses[0]?.classList.add('is-active');
+        activateSetup(2);
+        assistantFooter.textContent = 'Model access verified';
+        assistantFooter.classList.add('is-verified');
+      }, 3850);
+      schedule(() => {
+        statuses[0]?.classList.remove('is-active');
+        statuses[0]?.classList.add('is-complete');
+        statuses[2]?.classList.add('is-active');
+        activateSetup(3);
+      }, 5500);
+      schedule(() => {
+        statuses[2]?.classList.remove('is-active');
+        statuses[2]?.classList.add('is-complete');
+        statuses[1]?.classList.add('is-active');
+        assistantFooter.textContent = 'Stripe subscription tiers connected';
+      }, 6700);
+      schedule(completeSetup, 7700);
+      schedule(runSetup, 9600);
+    };
+
+    if (reduced) {
+      completeSetup();
+    } else {
+      observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting && !playing) {
+          playing = true;
+          runSetup();
+        } else if (!entry.isIntersecting && playing) {
+          playing = false;
+          timers.forEach(clearTimeout);
+          timers = [];
+          resetSetup();
+        }
+      }, { threshold: 0.25 });
+      observer.observe(setupRoot);
+    }
+  }
+
+  const flowRoot = document.getElementById('request-flow');
+
+  if (flowRoot) {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const nodes = [...flowRoot.querySelectorAll<HTMLElement>('[data-flow-node]')];
+    const phases = [...flowRoot.querySelectorAll<HTMLElement>('[data-phase]')];
+    const outputs = [...flowRoot.querySelectorAll<HTMLElement>('[data-flow-output]')];
+    const request = flowRoot.querySelector<HTMLElement>('[data-flow-bind="request"]')!;
+    const status = flowRoot.querySelector<HTMLElement>('[data-flow-bind="status"]')!;
+    const latency = flowRoot.querySelector<HTMLElement>('[data-flow-bind="latency"]')!;
+    const connectorSvg = flowRoot.querySelector<SVGSVGElement>('.architecture-connectors')!;
+    const connectorPaths = [...flowRoot.querySelectorAll<SVGPathElement>('[data-connector]')];
+    const connectorPulses = [...flowRoot.querySelectorAll<SVGCircleElement>('[data-connector-pulse]')];
+    const allTargets = [...nodes, ...phases, ...outputs];
+    const connectorCoords = new Map<string, { startX: number; startY: number; endX: number; endY: number }>();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let blocked = true;
+    let playing = false;
+
+    const layoutConnectors = () => {
+      if (matchMedia('(max-width: 980px)').matches) return;
+
+      const mapRect = flowRoot.getBoundingClientRect();
+      const planeRect = flowRoot.querySelector<HTMLElement>('.control-plane')!.getBoundingClientRect();
+      connectorSvg.setAttribute('viewBox', `0 0 ${mapRect.width} ${mapRect.height}`);
+
+      connectorPaths.forEach((path) => {
+        const name = path.dataset.connector!;
+        const source = flowRoot.querySelector<HTMLElement>(
+          name === 'user' || name === 'app' ? `[data-flow-node="${name}"]` : `[data-flow-output="${name}"]`,
+        );
+        if (!source) return;
+
+        const sourceRect = source.getBoundingClientRect();
+        const isInput = name === 'user' || name === 'app';
+        const startX = (isInput ? sourceRect.right : planeRect.right) - mapRect.left;
+        const endX = (isInput ? planeRect.left : sourceRect.left) - mapRect.left;
+        const y = sourceRect.top + sourceRect.height / 2 - mapRect.top;
+
+        path.setAttribute('d', `M ${startX} ${y} H ${endX}`);
+        connectorCoords.set(name, { startX, startY: y, endX, endY: y });
+      });
+    };
+
+    const clearTargets = () => {
+      allTargets.forEach((el) => el.classList.remove('is-active', 'is-complete'));
+      flowRoot.classList.remove('is-left-travel', 'is-right-travel');
+      connectorPulses.forEach((pulse) => {
+        pulse.classList.remove('is-traveling');
+      });
+    };
+
+    const activate = (target?: HTMLElement, completed: HTMLElement[] = []) => {
+      allTargets.forEach((el) => el.classList.remove('is-active', 'is-complete'));
+      completed.forEach((el) => el.classList.add('is-complete'));
+      target?.classList.add('is-active');
+    };
+
+    const travel = (side: 'left' | 'right', target = side === 'left' ? 'app' : 'models') => {
+      flowRoot.classList.remove('is-left-travel', 'is-right-travel');
+      void flowRoot.offsetWidth;
+      flowRoot.classList.add(side === 'left' ? 'is-left-travel' : 'is-right-travel');
+
+      const pulse = flowRoot.querySelector<SVGCircleElement>(`[data-connector-pulse="${side}"]`);
+      const coords = connectorCoords.get(target);
+      if (!pulse || !coords || matchMedia('(max-width: 980px)').matches) return;
+
+      pulse.classList.remove('is-traveling');
+      pulse.style.setProperty('--pulse-start-x', `${coords.startX}px`);
+      pulse.style.setProperty('--pulse-start-y', `${coords.startY}px`);
+      pulse.style.setProperty('--pulse-end-x', `${coords.endX}px`);
+      pulse.style.setProperty('--pulse-end-y', `${coords.endY}px`);
+      void pulse.getBoundingClientRect();
+      pulse.classList.add('is-traveling');
+      pulse.addEventListener('animationend', () => pulse.classList.remove('is-traveling'), { once: true });
+    };
+
+    const runLoop = () => {
+      blocked = !blocked;
+      flowRoot.dataset.outcome = blocked ? 'blocked' : 'allowed';
+      request.textContent = blocked ? 'POST /run/gpt-4o' : 'POST /run/flux-schnell';
+      status.textContent = 'checking...';
+      latency.textContent = '—';
+      clearTargets();
+
+      const completed: HTMLElement[] = [];
+      const stages: Array<() => void> = [
+        () => activate(nodes[0], completed),
+        () => { completed.push(nodes[0]); activate(nodes[1], completed); },
+        () => { completed.push(nodes[1]); activate(undefined, completed); travel('left'); },
+        () => { flowRoot.classList.remove('is-left-travel'); activate(phases[0], completed); },
+        () => { completed.push(phases[0]); activate(phases[1], completed); },
+      ];
+
+      if (blocked) {
+        stages.push(
+          () => { completed.push(phases[1]); activate(outputs[2], completed); travel('right', 'credits'); },
+          () => { completed.push(outputs[2]); activate(undefined, completed); status.textContent = 'blocked'; },
+          () => { latency.textContent = 'upgrade required'; },
+        );
+      } else {
+        stages.push(
+          () => { completed.push(phases[1]); activate(phases[2], completed); },
+          () => { completed.push(phases[2]); activate(phases[3], completed); },
+          () => { completed.push(phases[3]); activate(outputs[0], completed); travel('right', 'models'); },
+          () => { completed.push(outputs[0]); activate(outputs[1], completed); },
+          () => { completed.push(outputs[1]); activate(outputs[2], completed); },
+          () => { completed.push(outputs[2]); activate(undefined, completed); status.textContent = 'allowed'; },
+          () => { latency.textContent = '38 ms'; },
+        );
+      }
+
+      let index = 0;
+      const advance = () => {
+        if (!playing) return;
+        if (index < stages.length) {
+          stages[index++]();
+          timer = setTimeout(advance, 560);
+        } else {
+          timer = setTimeout(runLoop, 1500);
+        }
+      };
+      advance();
+    };
+
+    if (reduced) {
+      requestAnimationFrame(layoutConnectors);
+      flowRoot.dataset.outcome = 'allowed';
+      status.textContent = 'allowed';
+      latency.textContent = '38 ms';
+      allTargets.forEach((el) => el.classList.add('is-complete'));
+    } else {
+      requestAnimationFrame(layoutConnectors);
+      new ResizeObserver(layoutConnectors).observe(flowRoot);
+      const observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting && !playing) {
+          playing = true;
+          runLoop();
+        } else if (!entry.isIntersecting && playing) {
+          playing = false;
+          clearTimeout(timer);
+        }
+      }, { threshold: 0.25 });
+      observer.observe(flowRoot);
+    }
+  }
+
+  const routerRoot = document.getElementById('model-router');
+
+  if (routerRoot) {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const modelString = routerRoot.querySelector<HTMLElement>('.active-model-string')!;
+    const terminal = routerRoot.querySelector<HTMLElement>('[data-router-bind="terminal"]')!;
+    const status = routerRoot.querySelector<HTMLElement>('[data-router-bind="status"]')!;
+    const rows = [...routerRoot.querySelectorAll<HTMLElement>('[data-model]')];
+    const providerBadges = [...routerRoot.querySelectorAll<HTMLElement>('.provider-strip [data-provider]')];
+    const routes = [
+      { model: 'black-forest-labs/flux-schnell', provider: 'Black Forest Labs', result: 'flux-schnell → -4 credits' },
+      { model: 'openai/gpt-4o', provider: 'OpenAI', result: 'gpt-4o → -1 credit' },
+      { model: 'wan-video/wan-2.2-5b-fast', provider: 'Wan', result: 'wan-2.2-5b-fast → -18 credits' },
+      { model: 'speech/*', provider: 'ElevenLabs', result: 'speech/* → -2 credits' },
+      { model: 'claude-sonnet', provider: 'Anthropic', result: 'claude-sonnet → -2 credits' },
+      { model: 'gemini-2.5-pro', provider: 'Google', result: 'gemini-2.5-pro → -2 credits' },
+    ];
+    let routeIndex = 0;
+    let timers: ReturnType<typeof setTimeout>[] = [];
+    let playing = false;
+    let observer: IntersectionObserver | undefined;
+
+    const clearRouter = () => {
+      routerRoot.classList.remove('is-code-active', 'is-routing');
+      rows.forEach((row) => row.classList.remove('is-active', 'is-complete'));
+      providerBadges.forEach((badge) => badge.classList.remove('is-active'));
+    };
+    const schedule = (callback: () => void, delay: number) => {
+      timers.push(setTimeout(callback, delay));
+    };
+    const stopRouter = () => {
+      playing = false;
+      timers.forEach(clearTimeout);
+      timers = [];
+      observer?.disconnect();
+      clearRouter();
+    };
+    (window as any).__subscribeDevModelRouterCleanup?.();
+    (window as any).__subscribeDevModelRouterCleanup = stopRouter;
+
+    const beginRoute = () => {
+      if (!playing) return;
+      const route = routes[routeIndex];
+      clearRouter();
+      modelString.textContent = `'${route.model}'`;
+      terminal.textContent = `${route.model.split('/').pop()} → checking access`;
+      status.textContent = 'ROUTING';
+      routerRoot.classList.add('is-code-active');
+
+      schedule(() => {
+        if (!playing) return;
+        routerRoot.classList.remove('is-code-active');
+        void routerRoot.offsetWidth;
+        routerRoot.classList.add('is-routing');
+      }, 650);
+
+      schedule(() => {
+        if (!playing) return;
+        routerRoot.classList.remove('is-routing');
+        rows.find((row) => row.dataset.model === route.model)?.classList.add('is-active');
+        providerBadges.find((badge) => badge.dataset.provider === route.provider)?.classList.add('is-active');
+        terminal.textContent = route.result;
+        status.textContent = 'COMPLETE';
+      }, 1400);
+
+      schedule(() => {
+        routeIndex = (routeIndex + 1) % routes.length;
+        beginRoute();
+      }, 3000);
+    };
+
+    if (reduced) {
+      rows[1]?.classList.add('is-active');
+      providerBadges.find((badge) => badge.dataset.provider === 'Black Forest Labs')?.classList.add('is-active');
+    } else {
+      observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting && !playing) {
+          playing = true;
+          beginRoute();
+        } else if (!entry.isIntersecting && playing) {
+          playing = false;
+          timers.forEach(clearTimeout);
+          timers = [];
+          clearRouter();
+        }
+      }, { threshold: 0.25 });
+      observer.observe(routerRoot);
+    }
+  }
+
+  const revenueRoot = document.getElementById('revenue-flow');
+  const revenueConsole = document.getElementById('revenue-console');
+
+  if (revenueRoot && revenueConsole) {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const steps = [...revenueRoot.querySelectorAll<HTMLElement>('[data-revenue-step]')];
+    const details = [...revenueRoot.querySelectorAll<HTMLElement>('[data-revenue-detail]')];
+    const packet = revenueRoot.querySelector<HTMLElement>('.revenue-packet')!;
+    const packetLabel = revenueRoot.querySelector<HTMLElement>('[data-revenue-bind="packet"]')!;
+    const narration = document.querySelector<HTMLElement>('.flow-narration')!;
+    const narrationStep = narration.querySelector<HTMLElement>('[data-revenue-bind="step"]')!;
+    const narrationText = narration.querySelector<HTMLElement>('[data-revenue-bind="narration"]')!;
+    const consoleRequest = revenueConsole.querySelector<HTMLElement>('[data-revenue-bind="request"]')!;
+    const consoleUser = revenueConsole.querySelector<HTMLElement>('[data-revenue-bind="user"]')!;
+    const consolePolicy = revenueConsole.querySelector<HTMLElement>('[data-revenue-bind="policy"]')!;
+    const consoleCredits = revenueConsole.querySelector<HTMLElement>('[data-revenue-bind="credits"]')!;
+    const consoleStatus = revenueConsole.querySelector<HTMLElement>('[data-revenue-bind="status"]')!;
+    const baseDetails = ['client.run("openai/gpt-4o")', 'resolve user', 'verify plan', 'reserve credits', 'apply policy', 'stream output'];
+    let timers: ReturnType<typeof setTimeout>[] = [];
+    let observer: IntersectionObserver | undefined;
+    let playing = false;
+    let blocked = true;
+
+    const schedule = (callback: () => void, delay: number) => timers.push(setTimeout(callback, delay));
+    const resetVisuals = () => {
+      steps.forEach((step) => step.classList.remove('is-active', 'is-complete', 'is-blocked'));
+      details.forEach((detail, index) => (detail.textContent = baseDetails[index]));
+      revenueRoot.classList.remove('is-traveling', 'is-streaming');
+      revenueConsole.classList.remove('is-blocked');
+      narration.classList.remove('is-blocked');
+      packet.style.setProperty('--token-x', '0px');
+    };
+    const moveToken = (index: number, reverse = false) => {
+      if (innerWidth <= 980) return;
+      const distance = steps[index].offsetLeft + steps[index].offsetWidth / 2 - (steps[0].offsetLeft + steps[0].offsetWidth / 2);
+      revenueRoot.classList.toggle('is-streaming', reverse);
+      revenueRoot.classList.add('is-traveling');
+      packet.style.setProperty('--token-x', `${distance}px`);
+    };
+    const activate = (index: number, detail: string, message: string, packetText: string, blockedStage = false) => {
+      steps.forEach((step, stepIndex) => {
+        step.classList.toggle('is-active', stepIndex === index && !blockedStage);
+        step.classList.toggle('is-blocked', stepIndex === index && blockedStage);
+        step.classList.toggle('is-complete', stepIndex < index);
+      });
+      details[index].textContent = detail;
+      narrationStep.textContent = `Step ${index + 1} of 6`;
+      narrationText.textContent = message;
+      packetLabel.textContent = packetText;
+      narration.classList.toggle('is-blocked', blockedStage);
+      moveToken(index);
+    };
+    const stopRevenue = () => {
+      playing = false;
+      timers.forEach(clearTimeout);
+      timers = [];
+      observer?.disconnect();
+      resetVisuals();
+    };
+    (window as any).__subscribeDevRevenueFlowCleanup?.();
+    (window as any).__subscribeDevRevenueFlowCleanup = stopRevenue;
+
+    const runRevenue = () => {
+      if (!playing) return;
+      blocked = !blocked;
+      resetVisuals();
+      revenueRoot.dataset.scenario = blocked ? 'blocked' : 'success';
+      consoleRequest.textContent = 'request req_92c1';
+      consoleUser.textContent = 'user pending';
+      consolePolicy.textContent = 'policy pending';
+      consoleCredits.textContent = 'credits pending';
+      consoleStatus.textContent = 'request received';
+      activate(0, 'client.run("openai/gpt-4o")', 'Your app creates one request for GPT-4o.', 'Create request');
+
+      schedule(() => {
+        activate(1, 'user_ada_93 ✓', 'subscribe.dev identifies which user is making the request.', 'Who is this user?');
+        consoleUser.textContent = 'user ada_93 ✓';
+        consoleStatus.textContent = 'user resolved';
+      }, 900);
+      schedule(() => {
+        activate(2, blocked ? 'Free plan detected ✓' : 'Pro plan detected ✓', blocked ? 'The user is on the Free plan.' : 'The user has an active Pro subscription.', 'Check subscription');
+        consolePolicy.textContent = blocked ? 'free policy' : 'pro policy ✓';
+        consoleStatus.textContent = blocked ? 'free policy applied' : 'pro policy applied';
+      }, 1800);
+      schedule(() => {
+        activate(3, blocked ? 'limit check ✓' : '-4 credits ✓', blocked ? 'Their remaining allowance is checked before spending.' : 'Four credits are reserved before the model runs.', 'Reserve credits');
+        consoleCredits.textContent = blocked ? 'limit reached' : '-4 credits ✓';
+        consoleStatus.textContent = blocked ? 'checking access' : '4 credits reserved';
+      }, 2700);
+      schedule(() => {
+        activate(4, blocked ? 'upgrade required' : 'GPT-4o allowed ✓', blocked ? 'GPT-4o is not included on Free, so the request stops here.' : 'The Pro policy allows this user to access GPT-4o.', 'Can they use GPT-4o?', blocked);
+        consoleStatus.textContent = blocked ? 'upgrade required' : 'policy granted';
+        if (blocked) revenueConsole.classList.add('is-blocked');
+      }, 3600);
+
+      if (blocked) {
+        schedule(() => {
+          consoleStatus.textContent = 'request denied';
+        }, 4500);
+        schedule(runRevenue, 6200);
+      } else {
+        schedule(() => {
+          activate(5, 'GPT-4o selected ✓', 'The approved request is routed to GPT-4o.', 'Send to GPT-4o');
+          consoleStatus.textContent = 'model selected';
+        }, 4500);
+        schedule(() => {
+          steps.forEach((step) => step.classList.add('is-complete'));
+          steps.forEach((step) => step.classList.remove('is-active'));
+          revenueRoot.classList.add('is-streaming', 'is-traveling');
+          narrationStep.textContent = 'Response';
+          narrationText.textContent = 'GPT-4o streams the response back through the same secure path.';
+          packetLabel.textContent = '50 tokens returned';
+          consoleStatus.textContent = 'output streaming... 50 tokens';
+          moveToken(4, true);
+        }, 5400);
+        schedule(() => { consoleStatus.textContent = 'output streaming... 100 tokens'; packetLabel.textContent = '100 tokens returned'; moveToken(2, true); }, 6000);
+        schedule(() => { consoleStatus.textContent = 'output streaming... 200 tokens'; packetLabel.textContent = '200 tokens returned'; moveToken(0, true); }, 6600);
+        schedule(() => {
+          revenueRoot.classList.remove('is-traveling', 'is-streaming');
+          consoleStatus.textContent = 'Request completed ✓ · 38ms';
+          details[0].textContent = 'response received ✓';
+          narrationStep.textContent = 'Complete';
+          narrationText.textContent = 'The user receives the response. Billing and usage are already recorded.';
+          packetLabel.textContent = 'Response delivered ✓';
+        }, 7300);
+        schedule(runRevenue, 9000);
+      }
+    };
+
+    if (reduced) {
+      steps.forEach((step) => step.classList.add('is-complete'));
+      details[0].textContent = 'response received ✓';
+      consoleUser.textContent = 'user ada_93 ✓';
+      consolePolicy.textContent = 'pro policy ✓';
+      consoleCredits.textContent = '-4 credits ✓';
+      consoleStatus.textContent = 'Request completed ✓ · 38ms';
+    } else {
+      observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting && !playing) {
+          playing = true;
+          runRevenue();
+        } else if (!entry.isIntersecting && playing) {
+          playing = false;
+          timers.forEach(clearTimeout);
+          timers = [];
+          resetVisuals();
+        }
+      }, { threshold: 0.25 });
+      observer.observe(revenueRoot);
+    }
+  }
+
+  const usageDashboard = document.getElementById('usage-dashboard');
+
+  if (usageDashboard) {
+    const dashboardHeader = usageDashboard.querySelector<HTMLElement>('[data-dashboard-bind="header"]')!;
+    const dashboardTitle = usageDashboard.querySelector<HTMLElement>('[data-dashboard-bind="title"]')!;
+    const dashboardSubtitle = usageDashboard.querySelector<HTMLElement>('[data-dashboard-bind="subtitle"]')!;
+    const chartTitle = usageDashboard.querySelector<HTMLElement>('[data-dashboard-bind="chart-title"]')!;
+    const chartNote = usageDashboard.querySelector<HTMLElement>('[data-dashboard-bind="chart-note"]')!;
+    const chartLabels = usageDashboard.querySelector<HTMLElement>('[data-dashboard-bind="labels"]')!;
+    const drawer = usageDashboard.querySelector<HTMLElement>('.dashboard-drawer')!;
+    const blockedModal = usageDashboard.querySelector<HTMLElement>('.blocked-modal')!;
+    const toast = usageDashboard.querySelector<HTMLElement>('.dashboard-toast')!;
+    let toastTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const showToast = (message: string) => {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+    };
+
+    const setDrawer = (values: Record<string, string>) => {
+      Object.entries(values).forEach(([key, value]) => {
+        const field = drawer.querySelector<HTMLElement>(`[data-drawer-bind="${key}"]`);
+        if (field) field.textContent = value;
+      });
+      drawer.classList.add('open');
+      drawer.setAttribute('aria-hidden', 'false');
+    };
+
+    const closeDrawer = () => {
+      drawer.classList.remove('open');
+      drawer.setAttribute('aria-hidden', 'true');
+    };
+
+    const showBlockedRequests = () => {
+      closeDrawer();
+      blockedModal.classList.add('open');
+      blockedModal.setAttribute('aria-hidden', 'false');
+    };
+
+    const closeBlockedRequests = () => {
+      blockedModal.classList.remove('open');
+      blockedModal.setAttribute('aria-hidden', 'true');
+    };
+
+    usageDashboard.addEventListener('click', (event) => {
+      const target = (event.target as HTMLElement).closest<HTMLElement>('button');
+      if (!target) return;
+
+      const view = target.dataset.dashboardView;
+      const range = target.dataset.range;
+      const action = target.dataset.dashboardAction;
+      const user = target.dataset.user;
+
+      if (view === 'Users') {
+        dashboardHeader.textContent = 'Users';
+        dashboardTitle.textContent = 'Users & Credit Limits';
+        dashboardSubtitle.textContent = 'Monitor every user’s credits, limits, and blocked requests.';
+        showToast('Users credit limits view');
+      }
+
+      if (range) {
+        usageDashboard.querySelectorAll('[data-range]').forEach((item) => item.classList.toggle('active', item === target));
+        const labels: Record<string, string[]> = {
+          '7d': ['Jun 7', 'Jun 8', 'Jun 9', 'Jun 10', 'Jun 11', 'Jun 12', 'Jun 13'],
+          '30d': ['May 15', 'May 20', 'May 25', 'May 30', 'Jun 4', 'Jun 9', 'Jun 13'],
+          '90d': ['Mar 15', 'Mar 30', 'Apr 15', 'Apr 30', 'May 15', 'May 30', 'Jun 13'],
+        };
+        chartLabels.innerHTML = labels[range].map((label) => `<span>${label}</span>`).join('');
+        chartNote.textContent = `${range} view · ${range === '7d' ? '68,429' : range === '30d' ? '246,180' : '681,902'} credits consumed`;
+      }
+
+      if (user) {
+        closeBlockedRequests();
+        setDrawer({
+          name: target.dataset.name ?? 'User',
+          email: user,
+          plan: target.dataset.plan ?? 'Pro',
+          used: target.dataset.used ?? '0',
+          remaining: target.dataset.remaining ?? '0',
+          blocked: target.dataset.blocked ?? '0',
+          status: target.dataset.status ?? 'Healthy',
+          recent: target.dataset.status === 'Limit reached' ? 'gpt-4o · blocked · tier limit reached' : 'openai/gpt-4o · flux-schnell',
+        });
+      }
+
+      if (action === 'close') closeDrawer();
+      if (action === 'close-blocked') closeBlockedRequests();
+      if (action === 'export') showToast('Usage events exported');
+      if (action === 'blocked') showBlockedRequests();
+      if (action === 'increase') {
+        showToast('Limit increased for this user.');
+        closeDrawer();
+      }
+    });
+  }
+</script>

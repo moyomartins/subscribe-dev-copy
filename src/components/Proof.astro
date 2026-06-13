@@ -1,0 +1,714 @@
+---
+---
+
+<section class="proof on-paper" id="proof">
+  <div class="wrap">
+    <h2 class="enter">The monetization backend, in a hook.</h2>
+    <p class="lede enter" style="--i: 1">
+      One provider, one hook, one <code>run()</code> call. Stripe billing, per-user
+      metering, subscription gates, and model access come out of the box. The demo
+      on the right runs the exact flow your users would get.
+    </p>
+
+    <div class="duo">
+      <figure class="code-panel enter" aria-label="Integration code" style="--i: 2">
+        <figcaption class="code-bar">
+          <span class="file">App.tsx</span>
+          <span class="real">the real API, verbatim</span>
+        </figcaption>
+        <pre><code><span class="k">import</span> {'{'} useSubscribeDev {'}'} <span class="k">from</span> <span class="s">'@subscribe.dev/react'</span>
+
+<span class="k">const</span> plans = {'{'}
+  free: {'{'}
+    price: <span class="s">0</span>,
+    credits: <span class="s">1000</span>,
+    models: [<span class="s">'openai/gpt-4o'</span>],
+  {'}'},
+  pro: {'{'}
+    price: <span class="s">29</span>,
+    credits: <span class="s">10000</span>,
+    models: [<span class="s">'*'</span>],
+  {'}'},
+{'}'}
+
+<span class="k">function</span> <span class="f">Generate</span>() {'{'}
+  <span class="k">const</span> {'{'} client, subscription, usage {'}'} =
+    <span class="f">useSubscribeDev</span>()
+
+  <span class="k">const</span> result = <span class="k">await</span> client.<span class="f">run</span>(
+    <span class="s">'openai/gpt-4o'</span>,
+    {'{'} input, userId: <span class="s">'user_ada_93'</span> {'}'}
+  )
+
+  <span class="c">// billing, limits, and model gates update automatically</span>
+  <span class="k">return</span> {'{'} result, subscription, usage {'}'}
+{'}'}</code></pre>
+      </figure>
+
+      <div class="demo enter" id="sdk-demo" data-plan="free" data-tab="billing" style="--i: 3">
+        <div class="win">
+          <div class="win-bar">
+            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="win-title">subscribe.dev / monetization</span>
+            <span class="win-note"><i class="live-dot"></i>live simulation</span>
+          </div>
+          <div class="demo-shell">
+            <div class="demo-top">
+              <div>
+                <span class="demo-label">Workspace</span>
+                <strong>Acme AI Studio</strong>
+              </div>
+              <div class="status-stack">
+                <span class="status active"><i></i>Subscription active</span>
+                <span class="status stripe"><i></i>Stripe connected</span>
+              </div>
+            </div>
+
+            <div class="tabs" role="tablist" aria-label="Monetization dashboard views">
+              <button class="tab active" role="tab" aria-selected="true" data-tab="billing">Billing</button>
+              <button class="tab" role="tab" aria-selected="false" data-tab="usage">Usage</button>
+              <button class="tab" role="tab" aria-selected="false" data-tab="access">Access</button>
+              <button class="tab" role="tab" aria-selected="false" data-tab="models">Models</button>
+            </div>
+
+            <div class="tab-panel panel-billing">
+              <div class="metric-grid">
+                <article class="metric">
+                  <span>Current plan</span>
+                  <strong data-bind="plan">Free</strong>
+                  <small data-bind="plan-price">$0 / month</small>
+                </article>
+                <article class="metric">
+                  <span>Monthly spend</span>
+                  <strong data-bind="spend">$21.74</strong>
+                  <small>Live Stripe total</small>
+                </article>
+              </div>
+              <div class="plan-picker">
+                <button class="plan-choice selected" data-action="plan" data-plan="free"><b>Free</b><small>1K credits</small></button>
+                <button class="plan-choice" data-action="plan" data-plan="pro"><b>Pro</b><small>10K credits</small></button>
+                <button class="plan-choice" data-action="plan" data-plan="team"><b>Team</b><small>50K credits</small></button>
+                <button class="plan-choice" data-action="plan" data-plan="enterprise"><b>Enterprise</b><small>Custom</small></button>
+              </div>
+              <button class="upgrade" data-action="upgrade">Upgrade to Pro <span>→</span></button>
+            </div>
+
+            <div class="tab-panel panel-usage">
+              <div class="usage-head"><span>Credits used</span><strong data-bind="credits">743 / 1,000</strong></div>
+              <div class="usage-meter" role="progressbar" aria-label="Credits used" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="743">
+                <div class="usage-fill" data-bind="meter"></div>
+              </div>
+              <div class="usage-row"><span>GPT-4o requests</span><strong data-bind="requests">238</strong></div>
+              <div class="usage-row"><span>Reserved credits</span><strong data-bind="reserved">12</strong></div>
+              <button class="run-request" data-action="run"><span class="run-icon">▶</span> Run AI request <small>+17 credits</small></button>
+            </div>
+
+            <div class="tab-panel panel-access">
+              <div class="policy"><span>Subscription gate</span><strong data-bind="gate">Free tier</strong><i class="check">✓</i></div>
+              <div class="policy"><span>Per-user spend limit</span><strong data-bind="limit">$25 / month</strong><i class="check">✓</i></div>
+              <div class="policy"><span>Usage enforcement</span><strong>Automatic</strong><i class="check">✓</i></div>
+              <div class="policy"><span>Server required</span><strong>None</strong><i class="check">✓</i></div>
+            </div>
+
+            <div class="tab-panel panel-models">
+              <div class="model-row available"><span>GPT-4o</span><small>Text + vision</small><b>Available</b></div>
+              <div class="model-row locked" data-pro-model><span>Claude</span><small>Reasoning</small><b data-bind="model-state">Pro</b></div>
+              <div class="model-row locked" data-pro-model><span>Gemini</span><small>Multimodal</small><b data-bind="model-state">Pro</b></div>
+              <div class="model-row locked" data-pro-model><span>Flux</span><small>Image generation</small><b data-bind="model-state">Pro</b></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="readout" aria-live="polite">
+          <code data-bind="readout">subscription: free · usage: 743 / 1000 · stripe: connected</code>
+          <button class="reset" data-action="reset" type="button">reset demo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .proof {
+    padding-block: var(--space-section);
+  }
+
+  h2 {
+    font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+    font-weight: 740;
+    max-width: 18ch;
+  }
+
+  .lede {
+    margin-top: var(--space-lg);
+    max-width: var(--measure);
+    font-size: 1.15rem;
+    color: var(--ink-soft);
+  }
+
+  .lede code {
+    font-size: 0.95em;
+    color: var(--blue);
+  }
+
+  .duo {
+    display: grid;
+    grid-template-columns: 1.08fr 0.92fr;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    margin-top: var(--space-2xl);
+    align-items: start;
+  }
+
+  .duo > * {
+    min-width: 0;
+  }
+
+  /* Code panel: a blue object on paper */
+  .code-panel {
+    background: var(--blue-deep);
+    color: var(--mist);
+    border-radius: var(--radius-panel);
+    overflow: hidden;
+    box-shadow: 0 24px 60px oklch(0.3 0.14 264 / 0.25);
+  }
+
+  .code-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7rem 1.2rem;
+    border-bottom: 1px solid var(--hairline-on-blue);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+
+  .code-bar .real {
+    color: oklch(1 0 0 / 0.55);
+  }
+
+  pre {
+    padding: 1.3rem 1.4rem;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    line-height: 1.75;
+  }
+
+  .k { color: var(--mist); font-weight: 700; }
+  .s { color: oklch(0.87 0.09 160); }
+  .f { color: var(--white); }
+  .t { color: oklch(0.82 0.07 264); }
+  .a { color: oklch(0.87 0.09 160); }
+  .c { color: oklch(1 0 0 / 0.45); }
+
+  /* Demo window */
+  .win {
+    background: var(--white);
+    border: 1px solid var(--hairline-on-paper);
+    border-radius: var(--radius-panel);
+    overflow: hidden;
+    box-shadow: 0 24px 60px oklch(0.17 0.01 264 / 0.12);
+  }
+
+  .win-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.7rem 1.1rem;
+    border-bottom: 1px solid var(--hairline-on-paper);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+  }
+
+  .dots { display: inline-flex; gap: 5px; }
+  .dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--hairline-on-paper); }
+  .win-note { margin-inline-start: auto; color: var(--blue); }
+
+  .screen { display: none; padding: 1.5rem; }
+
+  [data-state='signed-out'] .screen-auth { display: block; }
+  [data-state='app'] .screen-app { display: block; }
+  [data-state='paywall'] .screen-paywall { display: block; }
+
+  /* Auth screen */
+  .screen-auth { text-align: center; padding-block: 3rem; }
+  .auth-name { font-family: var(--font-display); font-weight: 700; font-size: 1.4rem; }
+  .auth-hint { color: var(--ink-soft); margin-top: 0.4rem; }
+  .auth-actions { display: flex; justify-content: center; gap: 0.8rem; margin-top: 1.4rem; }
+  .auth-foot { margin-top: 2.2rem; font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft); }
+
+  /* Demo controls */
+  .d-btn {
+    border-radius: var(--radius-pill);
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.4rem;
+    transition: transform var(--dur-feedback) var(--ease-out-quart),
+                background-color var(--dur-feedback) var(--ease-out-quart);
+  }
+  .d-btn:active { transform: scale(0.96); }
+  .d-btn-solid { background: var(--blue); color: var(--white); }
+  .d-btn-solid:hover { background: var(--blue-deep); }
+  .d-btn-line { border: 1.5px solid oklch(0.17 0.01 264 / 0.3); }
+  .d-btn-line:hover { border-color: var(--ink); }
+
+  .app-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+  }
+  .user { font-family: var(--font-mono); color: var(--ink-soft); }
+  .plan {
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    background: var(--blue);
+    color: var(--white);
+    border-radius: var(--radius-pill);
+    padding: 0.2rem 0.7rem;
+  }
+
+  .meter-row { display: flex; align-items: center; gap: 0.8rem; margin-top: 0.9rem; }
+  .meter {
+    flex: 1;
+    height: 7px;
+    border-radius: var(--radius-pill);
+    background: oklch(0.93 0.01 264);
+    overflow: hidden;
+  }
+  .meter-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--blue);
+    border-radius: var(--radius-pill);
+    transition: width 450ms var(--ease-out-expo);
+  }
+  .meter-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .d-label {
+    display: block;
+    margin-top: 1.2rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+  }
+
+  .d-input, .d-select {
+    width: 100%;
+    font: inherit;
+    font-size: 0.92rem;
+    color: var(--ink);
+    background: var(--white);
+    border: 1.5px solid var(--hairline-on-paper);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.8rem;
+    margin-top: 0.35rem;
+    transition: border-color var(--dur-feedback) var(--ease-out-quart);
+  }
+
+  .d-input:focus-visible, .d-select:focus-visible {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px oklch(0.42 0.19 264 / 0.18);
+  }
+
+  .run-row {
+    display: flex;
+    gap: 0.7rem;
+    margin-top: 0.8rem;
+    align-items: stretch;
+  }
+  .run-row .d-select { margin-top: 0; font-family: var(--font-mono); font-size: 0.78rem; flex: 1; min-width: 0; }
+  .run-row .d-btn { flex: none; }
+
+  .output {
+    margin-top: 1.1rem;
+    border: 1px dashed var(--hairline-on-paper);
+    border-radius: var(--radius-sm);
+    min-height: 130px;
+    display: grid;
+    place-items: center;
+    padding: 0.9rem;
+  }
+
+  .out-empty, .out-spinner, .out-art, .out-text { display: none; }
+  [data-output='empty'] .out-empty { display: block; }
+  [data-output='running'] .out-spinner { display: inline-flex; }
+  [data-output='image'] .out-art { display: block; }
+  [data-output='text'] .out-text { display: block; }
+
+  .out-empty {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    text-align: center;
+    max-width: 30ch;
+  }
+
+  .out-spinner {
+    align-items: center;
+    gap: 0.7rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+  }
+  .out-spinner span {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2.5px solid var(--hairline-on-paper);
+    border-top-color: var(--blue);
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .out-art {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    --art-paper: oklch(0.96 0.02 50);
+    --art-sun: oklch(0.72 0.17 20);
+    --art-sea: var(--blue);
+    animation: art-in 600ms var(--ease-out-expo);
+  }
+  .out-art.variant-noon { --art-paper: oklch(0.97 0.03 95); --art-sun: oklch(0.78 0.15 75); }
+  .out-art.variant-night { --art-paper: oklch(0.9 0.04 264); --art-sun: oklch(0.85 0.06 264); }
+  @keyframes art-in { from { opacity: 0; transform: scale(0.97); } }
+
+  .out-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    max-width: 34ch;
+  }
+
+  /* Paywall */
+  .screen-paywall { text-align: center; padding-block: 2rem; }
+  .pay-title { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; }
+  .pay-hint { color: var(--ink-soft); font-size: 0.92rem; margin-top: 0.4rem; max-width: 34ch; margin-inline: auto; }
+  .plans { display: grid; gap: 0.7rem; margin-top: 1.4rem; text-align: start; }
+  .plan-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 1rem;
+    border: 1.5px solid var(--hairline-on-paper);
+    border-radius: var(--radius-sm);
+    padding: 0.85rem 1.1rem;
+    transition: border-color var(--dur-feedback) var(--ease-out-quart),
+                background-color var(--dur-feedback) var(--ease-out-quart);
+  }
+  .plan-row:hover { border-color: var(--blue); background: oklch(0.42 0.19 264 / 0.05); }
+  .plan-name { font-weight: 800; }
+  .plan-detail { color: var(--ink-soft); font-size: 0.85rem; }
+  .plan-price { font-family: var(--font-mono); font-weight: 400; }
+  .pay-foot { margin-top: 1.4rem; font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft); }
+
+  /* Readout */
+  .readout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.8rem;
+    font-size: 0.74rem;
+  }
+  .readout code { color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1; }
+  .reset {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    flex: none;
+  }
+
+  /* Monetization dashboard */
+  .demo-shell { padding: 1.15rem; }
+  .demo-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .demo-top > div:first-child { display: grid; gap: 0.12rem; }
+  .demo-top strong { font-family: var(--font-display); font-size: 1.05rem; }
+  .demo-label {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    color: var(--ink-soft);
+  }
+  .status-stack { display: grid; justify-items: end; gap: 0.3rem; }
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    color: var(--ink-soft);
+  }
+  .status i, .live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: oklch(0.67 0.16 150);
+    box-shadow: 0 0 0 3px oklch(0.67 0.16 150 / 0.14);
+  }
+  .win-note { display: inline-flex; align-items: center; gap: 0.45rem; }
+
+  .tabs {
+    display: flex;
+    gap: 0.25rem;
+    margin-top: 1.1rem;
+    padding: 0.22rem;
+    border: 1px solid var(--hairline-on-paper);
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+  .tab {
+    flex: 1;
+    min-width: max-content;
+    border-radius: 5px;
+    padding: 0.45rem 0.55rem;
+    color: var(--ink-soft);
+    font-size: 0.72rem;
+    font-weight: 700;
+    transition: background-color var(--dur-feedback) var(--ease-out-quart),
+                color var(--dur-feedback) var(--ease-out-quart);
+  }
+  .tab.active { background: var(--blue); color: var(--white); }
+  .tab-panel { display: none; min-height: 250px; padding-top: 1rem; }
+  [data-tab='billing'] .panel-billing,
+  [data-tab='usage'] .panel-usage,
+  [data-tab='access'] .panel-access,
+  [data-tab='models'] .panel-models { display: block; animation: panel-in 280ms var(--ease-out-quart); }
+  @keyframes panel-in { from { opacity: 0; transform: translateY(5px); } }
+
+  .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; }
+  .metric {
+    display: grid;
+    gap: 0.14rem;
+    border: 1px solid var(--hairline-on-paper);
+    border-radius: 8px;
+    padding: 0.8rem;
+  }
+  .metric span, .metric small { color: var(--ink-soft); font-size: 0.68rem; }
+  .metric strong { font-family: var(--font-display); font-size: 1.35rem; }
+  .plan-picker { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; margin-top: 0.7rem; }
+  .plan-choice {
+    display: grid;
+    gap: 0.12rem;
+    text-align: start;
+    border: 1px solid var(--hairline-on-paper);
+    border-radius: 7px;
+    padding: 0.55rem;
+    transition: border-color var(--dur-feedback) var(--ease-out-quart),
+                background-color var(--dur-feedback) var(--ease-out-quart);
+  }
+  .plan-choice b { font-size: 0.72rem; }
+  .plan-choice small { color: var(--ink-soft); font-size: 0.58rem; }
+  .plan-choice.selected { border-color: var(--blue); background: oklch(0.42 0.19 264 / 0.06); }
+  .upgrade, .run-request {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.75rem;
+    border-radius: 7px;
+    padding: 0.7rem 0.8rem;
+    background: var(--blue);
+    color: var(--white);
+    font-size: 0.78rem;
+    font-weight: 750;
+    transition: transform var(--dur-feedback) var(--ease-out-quart),
+                background-color var(--dur-feedback) var(--ease-out-quart);
+  }
+  .upgrade:hover, .run-request:hover { background: var(--blue-deep); }
+  .upgrade:active, .run-request:active { transform: scale(0.985); }
+  [data-plan='pro'] .upgrade { background: var(--blue-deep); }
+
+  .usage-head { display: flex; justify-content: space-between; font-size: 0.78rem; }
+  .usage-head strong { font-family: var(--font-mono); font-size: 0.72rem; }
+  .usage-meter { height: 10px; margin-top: 0.6rem; border-radius: 999px; background: oklch(0.93 0.01 264); overflow: hidden; }
+  .usage-fill { width: 74.3%; height: 100%; background: var(--blue); border-radius: inherit; transition: width 500ms var(--ease-out-expo); }
+  .usage-row, .policy, .model-row {
+    display: grid;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.72rem 0;
+    border-bottom: 1px solid var(--hairline-on-paper);
+    font-size: 0.75rem;
+  }
+  .usage-row { grid-template-columns: 1fr auto; }
+  .usage-row strong { font-family: var(--font-mono); font-size: 0.7rem; }
+  .run-request small { margin-inline-start: auto; margin-inline-end: 0.35rem; color: oklch(1 0 0 / 0.65); }
+  .run-icon { font-size: 0.62rem; }
+  .run-request.running .run-icon { animation: spin 0.7s linear infinite; }
+
+  .policy { grid-template-columns: 1fr auto auto; }
+  .policy strong { font-size: 0.7rem; }
+  .check { color: var(--blue); font-style: normal; font-weight: 800; }
+  .model-row { grid-template-columns: 1fr auto auto; }
+  .model-row span { font-weight: 750; }
+  .model-row small { color: var(--ink-soft); font-size: 0.65rem; }
+  .model-row b { border-radius: 999px; padding: 0.2rem 0.5rem; font-size: 0.58rem; background: oklch(0.93 0.01 264); color: var(--ink-soft); }
+  .model-row.available b, [data-plan='pro'] [data-pro-model] b,
+  [data-plan='team'] [data-pro-model] b, [data-plan='enterprise'] [data-pro-model] b {
+    background: oklch(0.67 0.16 150 / 0.13);
+    color: oklch(0.42 0.13 150);
+  }
+  [data-plan='pro'] [data-pro-model], [data-plan='team'] [data-pro-model],
+  [data-plan='enterprise'] [data-pro-model] { opacity: 1; }
+  [data-pro-model] { opacity: 0.62; transition: opacity 350ms var(--ease-out-quart); }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 920px) {
+    .duo { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 520px) {
+    .demo-top { align-items: flex-start; }
+    .status-stack { justify-items: start; }
+    .metric-grid { grid-template-columns: 1fr; }
+    .plan-picker { grid-template-columns: 1fr 1fr; }
+    .model-row { grid-template-columns: 1fr auto; }
+    .model-row small { display: none; }
+  }
+</style>
+
+<script>
+  const root = document.getElementById('sdk-demo')!;
+  const q = <T extends Element>(sel: string) => root.querySelector(sel) as T;
+  const qa = <T extends Element>(sel: string) => [...root.querySelectorAll(sel)] as T[];
+
+  const PLANS = {
+    free: { name: 'Free', credits: 1000, price: 0, limit: 25 },
+    pro: { name: 'Pro', credits: 10000, price: 29, limit: 100 },
+    team: { name: 'Team', credits: 50000, price: 99, limit: 500 },
+    enterprise: { name: 'Enterprise', credits: 250000, price: 499, limit: 2500 },
+  } as const;
+  type PlanId = keyof typeof PLANS;
+
+  const state = { plan: 'free' as PlanId, used: 743, spend: 21.74, requests: 238, reserved: 12 };
+  const meterFill = q<HTMLElement>('[data-bind="meter"]');
+  const meterBox = q<HTMLElement>('.usage-meter');
+  const creditsLabel = q<HTMLElement>('[data-bind="credits"]');
+  const spendLabel = q<HTMLElement>('[data-bind="spend"]');
+  const requestsLabel = q<HTMLElement>('[data-bind="requests"]');
+  const reservedLabel = q<HTMLElement>('[data-bind="reserved"]');
+  const priceLabel = q<HTMLElement>('[data-bind="plan-price"]');
+  const gateLabel = q<HTMLElement>('[data-bind="gate"]');
+  const limitLabel = q<HTMLElement>('[data-bind="limit"]');
+  const readout = q<HTMLElement>('[data-bind="readout"]');
+
+  function render() {
+    const plan = PLANS[state.plan];
+    const pct = Math.min(100, (state.used / plan.credits) * 100);
+    root.dataset.plan = state.plan;
+    meterFill.style.width = `${pct}%`;
+    meterBox.setAttribute('aria-valuemax', String(plan.credits));
+    meterBox.setAttribute('aria-valuenow', String(state.used));
+    creditsLabel.textContent = `${state.used.toLocaleString()} / ${plan.credits.toLocaleString()}`;
+    spendLabel.textContent = `$${state.spend.toFixed(2)}`;
+    requestsLabel.textContent = state.requests.toLocaleString();
+    reservedLabel.textContent = state.reserved.toLocaleString();
+    priceLabel.textContent = `$${plan.price} / month`;
+    gateLabel.textContent = `${plan.name} tier`;
+    limitLabel.textContent = `$${plan.limit} / month`;
+    qa<HTMLElement>('[data-bind="plan"]').forEach((el) => (el.textContent = plan.name));
+    qa<HTMLElement>('[data-bind="model-state"]').forEach((el) => {
+      el.textContent = state.plan === 'free' ? 'Pro' : 'Available';
+    });
+    qa<HTMLElement>('.plan-choice').forEach((el) => {
+      el.classList.toggle('selected', el.dataset.plan === state.plan);
+    });
+    q<HTMLElement>('[data-action="upgrade"]').innerHTML =
+      state.plan === 'free' ? 'Upgrade to Pro <span>→</span>' : `${plan.name} plan active <span>✓</span>`;
+    readout.textContent =
+      `subscription: ${state.plan} · usage: ${state.used} / ${plan.credits} · stripe: connected`;
+  }
+
+  let running = false;
+
+  function run() {
+    if (running) return;
+    const plan = PLANS[state.plan];
+    running = true;
+    const button = q<HTMLElement>('[data-action="run"]');
+    button.classList.add('running');
+    button.innerHTML = '<span class="run-icon">↻</span> Running request… <small>metering</small>';
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setTimeout(() => {
+      running = false;
+      state.used = Math.min(plan.credits, state.used + 17);
+      state.requests += 1;
+      state.reserved = 17;
+      state.spend += 0.08;
+      button.classList.remove('running');
+      button.innerHTML = '<span class="run-icon">▶</span> Run AI request <small>+17 credits</small>';
+      render();
+    }, reduced ? 50 : 720);
+  }
+
+  function choosePlan(plan: PlanId) {
+    const previous = PLANS[state.plan];
+    state.plan = plan;
+    if (state.used > PLANS[plan].credits || state.used / previous.credits > 0.9) {
+      state.used = Math.round(PLANS[plan].credits * 0.08);
+    }
+    render();
+  }
+
+  root.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const tab = target.closest<HTMLElement>('.tab[data-tab]');
+    if (tab) {
+      root.dataset.tab = tab.dataset.tab;
+      qa<HTMLElement>('.tab').forEach((item) => {
+        const active = item === tab;
+        item.classList.toggle('active', active);
+        item.setAttribute('aria-selected', String(active));
+      });
+      return;
+    }
+
+    const btn = target.closest<HTMLElement>('[data-action]');
+    if (!btn) return;
+    if (btn.dataset.action === 'run') {
+      run();
+    } else if (btn.dataset.action === 'upgrade') {
+      choosePlan('pro');
+      root.dataset.tab = 'models';
+      qa<HTMLElement>('.tab').forEach((item) => {
+        const active = item.dataset.tab === 'models';
+        item.classList.toggle('active', active);
+        item.setAttribute('aria-selected', String(active));
+      });
+    } else if (btn.dataset.action === 'plan') {
+      choosePlan(btn.dataset.plan as PlanId);
+    } else if (btn.dataset.action === 'reset') {
+      Object.assign(state, { plan: 'free', used: 743, spend: 21.74, requests: 238, reserved: 12 });
+      root.dataset.tab = 'billing';
+      qa<HTMLElement>('.tab').forEach((item) => {
+        const active = item.dataset.tab === 'billing';
+        item.classList.toggle('active', active);
+        item.setAttribute('aria-selected', String(active));
+      });
+      render();
+    }
+  });
+
+  render();
+</script>

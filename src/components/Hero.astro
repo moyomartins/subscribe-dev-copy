@@ -1,0 +1,470 @@
+---
+const tickerItems = [
+  'tiered subscriptions',
+  'usage metering',
+  '100+ AI models',
+  'auth built in',
+  'Stripe payments',
+  'user storage',
+  'spend limits',
+  'no backend',
+];
+
+const slotModels = [
+  'openai/gpt-4o',
+  'black-forest-labs/flux-schnell',
+  'wan-video/wan-2.2-5b-fast',
+];
+---
+
+<section class="hero" id="hero">
+  <div class="wrap">
+    <p class="install hero-rise" style="--seq: 0">
+      <code>$ bun add @subscribe.dev/react</code>
+      <button class="copy" type="button" data-copy="bun add @subscribe.dev/react" aria-label="Copy install command">copy</button>
+    </p>
+
+    <!-- 2 · a block caret types the claim, then hops down to run the CTAs -->
+    <h1 id="hero-h1">
+      <span class="line">Charge for your</span>
+      <span class="line">AI product. <em>Today.</em></span>
+    </h1>
+
+    <p class="sub hero-fade">
+      A secure frontend client for user-scoped access to 100+ text, image,
+      video, and speech models. Add tiered subscriptions, Stripe payments,
+      and automatic usage limits without writing a backend.
+    </p>
+
+    <div class="ctas hero-rise" style="--seq: 8">
+      <a class="btn btn-solid" href="https://platform.subscribe.dev">Start your project</a>
+      <a class="btn btn-ghost" href="https://docs.subscribe.dev">Read the docs</a>
+    </div>
+
+    <!-- 7 · the model-string slot machine -->
+    <p class="runline hero-rise" style="--seq: 9" aria-hidden="true">
+      <code class="command">
+        <span class="command-prefix">client.run('</span><span class="slot"><span class="reel">
+          {slotModels.map((m) => <span class="reel-item"><span class="model-name">{m}</span></span>)}
+          <span class="reel-item"><span class="model-name">{slotModels[0]}</span></span>
+        </span></span><span class="command-suffix">')</span>
+      </code>
+    </p>
+  </div>
+
+  <div class="ticker hero-rise" style="--seq: 10" aria-hidden="true">
+    <div class="track">
+      {[0, 1].map(() => (
+        <span class="set">
+          {tickerItems.map((item) => (
+            <span class="item">{item}<span class="dot">·</span></span>
+          ))}
+        </span>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-top: clamp(4rem, 9vw, 7.5rem);
+    overflow: hidden;
+  }
+
+  .install {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    font-size: 0.9rem;
+    color: var(--mist);
+    border: 1px solid var(--hairline-on-blue);
+    border-radius: var(--radius-pill);
+    padding: 0.45rem 0.6rem 0.45rem 1.1rem;
+    margin-bottom: var(--space-xl);
+  }
+
+  .copy {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--blue);
+    background: var(--white);
+    border-radius: var(--radius-pill);
+    padding: 0.25rem 0.8rem;
+    transition: background-color var(--dur-feedback) var(--ease-out-quart);
+  }
+
+  .copy:hover {
+    background: var(--mist);
+  }
+
+  h1 {
+    font-size: clamp(4.2rem, 11.2vw, 8.4rem);
+    font-weight: 750;
+    max-width: none;
+  }
+
+  h1 .line {
+    display: table;
+    width: auto;
+    max-width: 100%;
+    min-height: 1.02em;
+    padding-inline: 0.06em;
+    color: var(--blue);
+    background: var(--white);
+  }
+
+  h1 em {
+    display: inline-block;
+    font-style: italic;
+    font-weight: 620;
+    margin-inline: 0.1em -0.06em;
+    padding-inline: 0.1em;
+    background: var(--mist);
+    color: var(--blue);
+  }
+
+  @media (min-width: 64rem) {
+    h1 .line + .line {
+      display: flex;
+      align-items: baseline;
+      width: fit-content;
+      white-space: nowrap;
+    }
+  }
+
+  /* While the caret types, CSS entrances stand down and the tail waits */
+  .hero.typing .line {
+    animation: none;
+  }
+
+  .hero.typing .sub,
+  .hero.typing .ctas,
+  .hero.typing .runline,
+  .hero.typing .ticker {
+    animation-play-state: paused;
+  }
+
+  /* Once typed, the tail follows quickly instead of replaying long delays */
+  .hero.typed .sub { animation-delay: 0ms; }
+  .hero.typed .ctas { animation-delay: 100ms; }
+  .hero.typed .runline { animation-delay: 220ms; }
+  .hero.typed .ticker { animation-delay: 340ms; }
+
+  .caret {
+    display: inline-block;
+    width: 0.55ch;
+    height: 0.82em;
+    background: var(--white);
+    margin-inline-start: 0.06em;
+    vertical-align: baseline;
+    transform: translateY(0.08em);
+  }
+
+  h1 .caret {
+    background: var(--blue);
+  }
+
+  .caret.blink {
+    animation: caret-blink 0.9s steps(2, start) infinite;
+  }
+
+  .caret.fade {
+    transition: opacity 300ms var(--ease-out-quart);
+    opacity: 0;
+  }
+
+  @keyframes caret-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* The caret shrinks to button scale when it hops down to the CTA row */
+  .ctas .caret {
+    height: 1.4em;
+    width: 0.8ch;
+    align-self: center;
+    background: var(--white);
+  }
+
+  .sub {
+    margin-top: var(--space-lg);
+    max-width: 52ch;
+    font-size: clamp(1.1rem, 1.5vw, 1.25rem);
+    line-height: 1.65;
+    color: var(--mist);
+  }
+
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+  }
+
+  .runline {
+    margin-top: var(--space-lg);
+    font-size: 0.92rem;
+    color: var(--mist);
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .command {
+    display: inline-flex;
+    align-items: baseline;
+    white-space: nowrap;
+  }
+
+  .command-prefix,
+  .command-suffix {
+    flex: none;
+  }
+
+  .slot {
+    display: inline-block;
+    flex: none;
+    width: 14ch;
+    height: 1.5em;
+    overflow: hidden;
+    color: var(--white);
+    transition: width 420ms var(--ease-out-expo);
+  }
+
+  .reel {
+    display: block;
+    width: max-content;
+    transform: translateY(var(--roll, 0));
+    transition: transform 480ms var(--ease-out-expo);
+  }
+
+  .reel-item {
+    display: block;
+    width: max-content;
+    height: 1.5em;
+    line-height: 1.5em;
+  }
+
+  .model-name {
+    display: inline-block;
+  }
+
+  .hero-rise {
+    animation: hero-rise 0.8s var(--ease-out-expo) both;
+    animation-delay: calc(var(--seq) * 90ms);
+  }
+
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+  }
+
+  .hero-fade {
+    animation: hero-fade 0.9s var(--ease-out-quart) both;
+    animation-delay: 600ms;
+  }
+
+  @keyframes hero-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .ticker {
+    margin-top: clamp(3.5rem, 7vw, 6rem);
+    background: var(--blue-deep);
+    border-block: 1px solid var(--hairline-on-blue);
+    overflow: hidden;
+    white-space: nowrap;
+    padding-block: 0.9rem;
+    z-index: var(--z-ticker);
+    position: relative;
+  }
+
+  .track {
+    display: inline-block;
+    animation: ticker-scroll 36s linear infinite;
+  }
+
+  .item {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--mist);
+  }
+
+  .item .dot {
+    margin-inline: 1.4rem;
+    color: oklch(1 0 0 / 0.4);
+  }
+
+  @keyframes ticker-scroll {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track {
+      animation: none;
+    }
+    .reel {
+      transition: none;
+    }
+    .slot {
+      transition: none;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    h1 .line {
+      display: block;
+      width: 100%;
+    }
+
+    h1 em {
+      margin-inline-start: 0.04em;
+    }
+  }
+
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.copy').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy ?? '');
+        const prev = btn.textContent;
+        btn.textContent = 'copied';
+        setTimeout(() => (btn.textContent = prev), 1400);
+      } catch {
+        /* clipboard unavailable; the command is visible to select */
+      }
+    });
+  });
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hero = document.getElementById('hero')!;
+
+  // 2 · typed headline. The full text ships in the HTML; without JS (or with
+  // reduced motion) it remains visible and untouched.
+  const h1 = document.getElementById('hero-h1')!;
+
+  if (!reduced) {
+    const lines = [...h1.querySelectorAll<HTMLElement>('.line')];
+    const nodes: Text[] = [];
+    const collect = (el: Node) => {
+      el.childNodes.forEach((child) => {
+        if (child.nodeType === Node.TEXT_NODE) nodes.push(child as Text);
+        else collect(child);
+      });
+    };
+    lines.forEach(collect);
+
+    const fullTexts = nodes.map((n) => n.textContent ?? '');
+    h1.setAttribute('aria-label', lines.map((l) => l.textContent).join(' '));
+    lines.forEach((l) => l.setAttribute('aria-hidden', 'true'));
+    nodes.forEach((n) => (n.textContent = ''));
+
+    hero.classList.add('typing');
+
+    let done = false;
+
+    // Safety net: timers throttle in background tabs; past this point the
+    // headline is complete and the tail visible no matter what the chain did.
+    setTimeout(() => {
+      if (!done) {
+        done = true;
+        nodes.forEach((n, i) => (n.textContent = fullTexts[i]));
+        caret.remove();
+      }
+      hero.classList.remove('typing');
+      hero.classList.add('typed');
+    }, 2600);
+
+    const caret = document.createElement('span');
+    caret.className = 'caret';
+    caret.setAttribute('aria-hidden', 'true');
+
+    let nodeIdx = 0;
+    let charIdx = 0;
+
+    const placeCaret = () => {
+      const node = nodes[nodeIdx];
+      node.parentNode!.insertBefore(caret, node.nextSibling);
+    };
+
+    const finish = () => {
+      if (done) return;
+      done = true;
+      caret.classList.add('blink');
+      setTimeout(() => {
+        // hop down and "run" the CTAs
+        caret.classList.remove('blink');
+        const ctas = hero.querySelector('.ctas')!;
+        ctas.prepend(caret);
+        hero.classList.remove('typing');
+        hero.classList.add('typed');
+        setTimeout(() => caret.classList.add('fade'), 500);
+        setTimeout(() => caret.remove(), 900);
+      }, 700);
+    };
+
+    const type = () => {
+      if (done) return;
+      if (nodeIdx >= nodes.length) {
+        finish();
+        return;
+      }
+      const target = fullTexts[nodeIdx];
+      if (charIdx === 0) placeCaret();
+      charIdx += 1;
+      nodes[nodeIdx].textContent = target.slice(0, charIdx);
+      if (charIdx >= target.length) {
+        nodeIdx += 1;
+        charIdx = 0;
+      }
+      setTimeout(type, 26);
+    };
+
+    setTimeout(type, 350);
+  }
+
+  // 7 · slot machine: roll the model id every few seconds
+  const reel = hero.querySelector<HTMLElement>('.reel');
+  const slot = hero.querySelector<HTMLElement>('.slot');
+
+  if (reel && slot) {
+    const items = [...reel.querySelectorAll<HTMLElement>('.reel-item')];
+    const names = [...reel.querySelectorAll<HTMLElement>('.model-name')];
+
+    const fitWidth = (i: number) => {
+      slot.style.width = `${names[i].getBoundingClientRect().width}px`;
+    };
+
+    document.fonts?.ready.then(() => {
+      fitWidth(0);
+    });
+
+    if (!reduced) {
+      let pos = 0;
+      setInterval(() => {
+        pos += 1;
+        reel.style.setProperty('--roll', `-${pos * 1.5}em`);
+        fitWidth(pos % items.length === items.length - 1 ? 0 : pos);
+        if (pos === items.length - 1) {
+          // after sliding onto the duplicate first item, snap back silently
+          setTimeout(() => {
+            reel.style.transition = 'none';
+            reel.style.setProperty('--roll', '0');
+            void reel.offsetHeight;
+            reel.style.transition = '';
+            pos = 0;
+          }, 520);
+        }
+      }, 2800);
+    }
+  }
+</script>

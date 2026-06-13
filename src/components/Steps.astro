@@ -1,0 +1,106 @@
+---
+const steps = [
+  {
+    n: '1',
+    title: 'Install',
+    code: 'bun add @subscribe.dev/react',
+    note: 'One package. React 18, Vite or Bun, nothing else to deploy.',
+  },
+  {
+    n: '2',
+    title: 'Wrap',
+    code: '<SubscribeDevProvider projectToken={KEY}>',
+    note: 'Auth, billing, metering, and storage arrive with the provider.',
+  },
+  {
+    n: '3',
+    title: 'Run',
+    code: "await client.run('openai/gpt-4o', { input })",
+    note: 'Charge for it from day one. Stripe and spend limits are already on.',
+  },
+];
+---
+
+<section class="steps on-paper">
+  <div class="wrap">
+    <h2 class="enter">Three steps to revenue.</h2>
+    <ol class="seq">
+      {steps.map((step, i) => (
+        <li class="enter" style={`--i: ${i + 1}`}>
+          <span class="num" aria-hidden="true">{step.n}</span>
+          <div class="body">
+            <h3>{step.title}</h3>
+            <code>{step.code}</code>
+            <p>{step.note}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .steps {
+    padding-block: var(--space-section);
+  }
+
+  h2 {
+    font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+    font-weight: 740;
+  }
+
+  .seq {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    margin-top: var(--space-2xl);
+    counter-reset: step;
+  }
+
+  .seq li {
+    display: flex;
+    gap: 1.1rem;
+    align-items: flex-start;
+    min-width: 0;
+  }
+
+  .body {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .num {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 2.6rem;
+    line-height: 1;
+    color: var(--blue);
+    flex: none;
+    transform: translateY(-0.08em);
+  }
+
+  .body h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .body code {
+    display: block;
+    margin-top: 0.6rem;
+    font-size: 0.8rem;
+    color: var(--blue-deep);
+    background: oklch(0.42 0.19 264 / 0.07);
+    border-radius: var(--radius-sm);
+    padding: 0.55rem 0.75rem;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .body p {
+    margin-top: 0.6rem;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    max-width: 34ch;
+  }
+</style>
