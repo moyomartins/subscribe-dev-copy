@@ -187,14 +187,22 @@ console.log(usage, subscriptionStatus)</code></pre>
       <p>Track consumption and credits remaining for every subscriber. When a user reaches their tier limit, access stops safely.</p>
     </div>
 
-    <div class="dashboard-frame coded-dashboard enter" style="--i: 1">
+    <div class="container-scroll-stage enter" id="metering-scroll" style="--i: 1">
+      <div class="container-scroll-sticky">
+        <div class="scroll-dashboard-frame">
+          <div class="scroll-dashboard screenshot-dashboard">
+            <img src="/images/subscribe-dashboard-frame.png" alt="subscribe.dev dashboard overview" />
+          </div>
+        </div>
+        <div class="scroll-dashboard-glow" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div class="dashboard-frame coded-dashboard retired-dashboard" aria-hidden="true">
       <div class="dashboard-frame-bar" aria-hidden="true">
         <span class="frame-dots"><i></i><i></i><i></i></span>
         <span class="frame-address">platform.subscribe.dev/dashboard</span>
         <span class="frame-live"><i></i>Live product</span>
-      </div>
-      <div class="dashboard-image-wrap replacement-dashboard dashboard-inner-viewport">
-        <img src="/images/subscribe-dashboard-frame.png" alt="subscribe.dev dashboard overview" />
       </div>
       <div class="product-dashboard retired-dashboard" id="usage-dashboard">
         <svg class="dashboard-icon-sprite" aria-hidden="true">
@@ -541,6 +549,82 @@ console.log(usage, subscriptionStatus)</code></pre>
   @keyframes policy-footer-border { to { transform: translateX(100%); } }
   @keyframes policy-bar-breathe { 50% { opacity: 0.7; } }
   @keyframes policy-running { 50% { opacity: 0.58; } }
+
+  .container-scroll-stage { --scroll-progress: 0; position: relative; height: clamp(62rem, 145vh, 82rem); margin-top: 2rem; }
+  .container-scroll-sticky { position: sticky; top: 7vh; display: grid; place-items: center; height: 86vh; perspective: 1400px; }
+  .scroll-dashboard-frame {
+    position: relative;
+    z-index: 2;
+    width: min(78vw, 76rem);
+    aspect-ratio: 12 / 7;
+    border: 1px solid rgb(148 185 255 / 0.3);
+    border-radius: 22px;
+    overflow: hidden;
+    background: #050914;
+    box-shadow: 0 35px 100px rgb(0 18 75 / calc(.28 + var(--scroll-progress) * .22)), inset 0 1px rgb(255 255 255 / .14), 0 0 0 1px rgb(68 125 255 / .08);
+    transform: rotateX(calc(9deg - var(--scroll-progress) * 9deg)) scale(calc(.78 + var(--scroll-progress) * .2)) translateY(calc(3rem - var(--scroll-progress) * 3rem));
+    transform-origin: center top;
+    filter: brightness(calc(.82 + var(--scroll-progress) * .18)) saturate(calc(.88 + var(--scroll-progress) * .12));
+    transition: box-shadow 100ms linear;
+    will-change: transform;
+  }
+  .scroll-dashboard-frame::after { position: absolute; z-index: 8; inset: 0; border: 1px solid rgb(255 255 255 / .08); border-radius: inherit; box-shadow: inset 0 1px rgb(255 255 255 / .14); content: ''; pointer-events: none; }
+  .scroll-dashboard-glow { position: absolute; z-index: 0; bottom: 5%; width: min(68vw, 64rem); height: 14rem; border-radius: 50%; background: rgb(35 91 255 / calc(.12 + var(--scroll-progress, 0) * .12)); filter: blur(70px); transform: scaleX(calc(.8 + var(--scroll-progress, 0) * .2)); pointer-events: none; }
+  .scroll-browser-chrome { display: flex; align-items: center; gap: .75rem; height: 2.65rem; padding-inline: .9rem; border-bottom: 1px solid rgb(255 255 255 / .08); background: linear-gradient(180deg, rgb(25 35 58 / .9), rgb(12 19 35 / .88)); color: rgb(223 231 255 / .65); backdrop-filter: blur(22px) saturate(140%); }
+  .scroll-browser-dots { display: flex; gap: .35rem; }
+  .scroll-browser-dots i { width: .48rem; height: .48rem; border-radius: 50%; background: #ff6058; box-shadow: 0 0 10px rgb(255 96 88 / .22); }
+  .scroll-browser-dots i:nth-child(2) { background: #ffbd44; } .scroll-browser-dots i:nth-child(3) { background: #00ca4e; }
+  .scroll-browser-address { display: flex; align-items: center; gap: .4rem; margin-inline: auto; border: 1px solid rgb(255 255 255 / .09); border-radius: 999px; padding: .32rem .75rem; background: rgb(255 255 255 / .035); font-family: var(--font-mono); font-size: .54rem; }
+  .scroll-browser-address i { width: .35rem; height: .35rem; border-radius: 50%; background: #55d68a; box-shadow: 0 0 8px #55d68a; }
+  .scroll-browser-live { display: flex; align-items: center; gap: .35rem; font-family: var(--font-mono); font-size: .52rem; }
+  .scroll-browser-live i { width: .38rem; height: .38rem; border-radius: 50%; background: #55d68a; }
+  .scroll-dashboard { display: grid; grid-template-columns: 10rem minmax(0, 1fr); height: calc(100% - 2.65rem); color: #f7f9ff; }
+  .screenshot-dashboard { display: block; width: 100%; overflow: hidden; background: #000; }
+  .scroll-dashboard.screenshot-dashboard { height: 100%; }
+  .screenshot-dashboard img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: top center; }
+  .scroll-dash-sidebar { display: flex; flex-direction: column; padding: .85rem .7rem; border-right: 1px solid rgb(255 255 255 / .07); background: linear-gradient(180deg, #070d1d, #050914); }
+  .scroll-dash-brand { display: flex; align-items: center; gap: .55rem; padding: .35rem; font-size: .68rem; }
+  .scroll-dash-brand span { display: grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 7px; background: #1744c8; box-shadow: 0 8px 20px rgb(23 68 200 / .3); }
+  .scroll-dash-sidebar nav { display: grid; gap: .22rem; margin-top: 1.25rem; }
+  .scroll-dash-sidebar nav span { display: flex; gap: .55rem; align-items: center; border-radius: 7px; padding: .48rem .55rem; color: rgb(222 230 255 / .38); font-size: .58rem; }
+  .scroll-dash-sidebar nav span.active { background: rgb(66 111 255 / .16); color: #dbe6ff; box-shadow: inset 0 0 0 1px rgb(102 144 255 / .18); }
+  .scroll-dash-sidebar nav b { font-weight: 550; }
+  .scroll-dash-account { display: flex; align-items: center; gap: .5rem; margin-top: auto; border: 1px solid rgb(255 255 255 / .07); border-radius: 9px; padding: .5rem; background: rgb(255 255 255 / .025); }
+  .scroll-dash-account > span { display: grid; place-items: center; width: 1.55rem; height: 1.55rem; border-radius: 50%; background: linear-gradient(145deg, #2859e6, #7898ff); font-size: .46rem; font-weight: 800; }
+  .scroll-dash-account p { display: grid; } .scroll-dash-account b { font-size: .52rem; } .scroll-dash-account small { color: rgb(222 230 255 / .38); font-size: .44rem; }
+  .scroll-dash-main { min-width: 0; padding: .9rem; overflow: hidden; background: radial-gradient(circle at 68% 0%, rgb(29 72 190 / .18), transparent 34%), #080e1c; }
+  .scroll-dash-header { display: flex; align-items: center; justify-content: space-between; }
+  .scroll-dash-header small, .scroll-card-head small { color: rgb(222 230 255 / .38); font-size: .47rem; }
+  .scroll-dash-header h3 { margin-top: .08rem; font-size: 1rem; letter-spacing: -.035em; }
+  .scroll-health, .scroll-safe { display: flex; align-items: center; gap: .35rem; border: 1px solid rgb(85 214 138 / .18); border-radius: 999px; padding: .28rem .5rem; background: rgb(85 214 138 / .07); color: #78e3a4; font-size: .47rem; }
+  .scroll-health i { width: .35rem; height: .35rem; border-radius: 50%; background: #55d68a; box-shadow: 0 0 8px rgb(85 214 138 / .7); }
+  .scroll-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: .55rem; margin-top: .75rem; }
+  .scroll-metrics article, .scroll-chart-card, .scroll-credit-card, .scroll-users-card { border: 1px solid rgb(135 164 235 / .11); border-radius: 11px; background: linear-gradient(145deg, rgb(255 255 255 / .045), rgb(255 255 255 / .018)); box-shadow: inset 0 1px rgb(255 255 255 / .045), 0 12px 30px rgb(0 0 0 / .13); }
+  .scroll-metrics article { display: grid; gap: .12rem; padding: .62rem; }
+  .scroll-metrics span { color: rgb(222 230 255 / .42); font-size: .47rem; } .scroll-metrics b { margin-top: .1rem; font-family: var(--font-mono); font-size: .84rem; font-weight: 500; }
+  .scroll-metrics small { color: rgb(222 230 255 / .3); font-size: .42rem; } .scroll-metrics small.up { color: #55d68a; }
+  .scroll-dash-grid { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(11rem, .72fr); gap: .55rem; margin-top: .55rem; }
+  .scroll-card-head { display: flex; align-items: center; justify-content: space-between; padding: .58rem .65rem; }
+  .scroll-card-head > div { display: grid; gap: .1rem; } .scroll-card-head b { font-size: .55rem; } .scroll-card-head > span:not(.scroll-safe) { color: rgb(222 230 255 / .42); font-family: var(--font-mono); font-size: .45rem; }
+  .scroll-chart { position: relative; height: 12.5rem; padding: .25rem .7rem 1.25rem; overflow: hidden; }
+  .scroll-chart-lines { position: absolute; inset: .25rem .7rem 1.25rem; display: grid; grid-template-rows: repeat(5, 1fr); } .scroll-chart-lines i { border-top: 1px dashed rgb(135 164 235 / .09); }
+  .scroll-chart svg { position: relative; z-index: 2; width: 100%; height: 100%; overflow: visible; }
+  .scroll-chart-fill { fill: url(#scroll-chart-fill); } .scroll-chart-line, .scroll-chart-usage { fill: none; vector-effect: non-scaling-stroke; stroke-width: 2; }
+  .scroll-chart-line { stroke: #5680ff; filter: drop-shadow(0 0 4px rgb(86 128 255 / .4)); } .scroll-chart-usage { stroke: #55d68a; stroke-dasharray: 4 5; opacity: .75; }
+  .scroll-chart-labels { position: absolute; z-index: 3; right: .7rem; bottom: .4rem; left: .7rem; display: flex; justify-content: space-between; color: rgb(222 230 255 / .28); font-size: .4rem; }
+  .scroll-credit-card { display: flex; flex-direction: column; }
+  .scroll-credit-ring { display: grid; place-items: center; width: 6.5rem; height: 6.5rem; margin: .55rem auto; border-radius: 50%; background: conic-gradient(#5680ff 0 68%, rgb(255 255 255 / .06) 68%); box-shadow: 0 0 32px rgb(46 93 255 / .12); }
+  .scroll-credit-ring::before { position: absolute; width: 5rem; height: 5rem; border-radius: 50%; background: #0a1121; content: ''; } .scroll-credit-ring div { position: relative; z-index: 1; display: grid; text-align: center; }
+  .scroll-credit-ring b { font-family: var(--font-mono); font-size: 1rem; } .scroll-credit-ring small { color: rgb(222 230 255 / .38); font-size: .43rem; }
+  .scroll-credit-summary { display: grid; gap: .3rem; padding: 0 .75rem; } .scroll-credit-summary span { display: flex; align-items: center; gap: .35rem; color: rgb(222 230 255 / .48); font-size: .45rem; }
+  .scroll-credit-summary i { width: .35rem; height: .35rem; border-radius: 50%; background: #5680ff; } .scroll-credit-summary span:last-child i { background: rgb(255 255 255 / .16); }
+  .scroll-credit-card p { display: flex; align-items: center; gap: .35rem; margin: auto .55rem .55rem; border-radius: 7px; padding: .42rem; background: rgb(85 214 138 / .06); color: #78e3a4; font-size: .42rem; } .scroll-credit-card p i { width: .35rem; height: .35rem; border-radius: 50%; background: #55d68a; }
+  .scroll-users-card { margin-top: .55rem; overflow: hidden; }
+  .scroll-user-row { display: grid; grid-template-columns: minmax(10rem, 1.7fr) .55fr .75fr .7fr .75fr; gap: .4rem; align-items: center; min-height: 2.05rem; padding-inline: .65rem; border-top: 1px solid rgb(135 164 235 / .07); color: rgb(222 230 255 / .5); font-size: .43rem; }
+  .scroll-user-row > span:first-child { display: flex; align-items: center; gap: .4rem; min-width: 0; } .scroll-user-row i { display: grid; place-items: center; width: 1.25rem; height: 1.25rem; border-radius: 50%; background: #1744c8; color: #fff; font-size: .38rem; font-style: normal; }
+  .scroll-user-row b { overflow: hidden; color: rgb(239 244 255 / .72); font-size: .44rem; text-overflow: ellipsis; white-space: nowrap; }
+  .scroll-user-row em { width: fit-content; border-radius: 999px; padding: .18rem .35rem; background: rgb(85 214 138 / .08); color: #78e3a4; font-size: .39rem; font-style: normal; } .scroll-user-row em.limit { background: rgb(255 111 106 / .08); color: #ff8a85; }
+  .scroll-user-head { min-height: 1.65rem; background: rgb(255 255 255 / .018); color: rgb(222 230 255 / .3); font-size: .39rem; }
 
   .meter-dashboard { display: grid; grid-template-columns: 12rem 1fr; margin-top: 4rem; background: var(--white); color: var(--ink); border-radius: var(--radius-panel); overflow: hidden; border: 1px solid var(--hairline-on-blue); }
   .dashboard-frame { margin-top: 4rem; overflow: hidden; border: 1px solid var(--hairline-on-blue); border-radius: var(--radius-panel); background: oklch(0.14 0.01 264); box-shadow: 0 28px 75px oklch(0.18 0.12 264 / 0.38); }
@@ -890,6 +974,16 @@ console.log(usage, subscriptionStatus)</code></pre>
 
   @media (max-width: 980px) {
     .section-copy, .code-result { grid-template-columns: 1fr; }
+    .container-scroll-stage { height: 70rem; }
+    .container-scroll-sticky { top: 10vh; height: 78vh; }
+    .scroll-dashboard-frame { width: min(92vw, 58rem); transform: rotateX(calc(7deg - var(--scroll-progress) * 7deg)) scale(calc(.82 + var(--scroll-progress) * .16)); }
+    .scroll-dashboard:not(.screenshot-dashboard) { grid-template-columns: 7.5rem minmax(0, 1fr); }
+    .scroll-dash-sidebar { padding-inline: .5rem; }
+    .scroll-dash-sidebar nav span { padding-inline: .4rem; }
+    .scroll-metrics { grid-template-columns: repeat(2, 1fr); }
+    .scroll-dash-grid { grid-template-columns: 1fr; }
+    .scroll-credit-card { display: none; }
+    .scroll-chart { height: 11rem; }
     .architecture-map { grid-template-columns: 1fr; gap: 1rem; }
     .architecture-connectors, .arch-lines { display: none; }
     .arch-side { grid-template-columns: 1fr 1fr; }
@@ -910,6 +1004,25 @@ console.log(usage, subscriptionStatus)</code></pre>
   }
 
   @media (max-width: 680px) {
+    .container-scroll-stage { height: 54rem; margin-top: 1rem; }
+    .container-scroll-sticky { top: 16vh; height: 66vh; perspective: 900px; }
+    .scroll-dashboard-frame { width: calc(100vw - 2rem); aspect-ratio: 12 / 7; border-radius: 16px; transform: rotateX(calc(5deg - var(--scroll-progress) * 5deg)) scale(calc(.86 + var(--scroll-progress) * .12)); }
+    .scroll-browser-chrome { height: 2.2rem; padding-inline: .6rem; }
+    .scroll-browser-address { max-width: 13rem; overflow: hidden; padding-inline: .55rem; text-overflow: ellipsis; white-space: nowrap; }
+    .scroll-browser-live { display: none; }
+    .scroll-dashboard:not(.screenshot-dashboard) { height: calc(100% - 2.2rem); }
+    .scroll-dashboard:not(.screenshot-dashboard) { grid-template-columns: 1fr; }
+    .scroll-dash-sidebar { display: none; }
+    .scroll-dash-main { padding: .7rem; }
+    .scroll-dash-header h3 { font-size: .88rem; }
+    .scroll-health { font-size: .4rem; }
+    .scroll-metrics { gap: .4rem; margin-top: .55rem; }
+    .scroll-metrics article { padding: .5rem; }
+    .scroll-metrics article:nth-child(n+3) { display: none; }
+    .scroll-chart { height: 11.5rem; }
+    .scroll-users-card { margin-top: .4rem; }
+    .scroll-user-row { grid-template-columns: minmax(8rem, 1.6fr) .5fr .65fr .7fr; min-height: 2.25rem; }
+    .scroll-user-row > span:nth-child(4), .scroll-user-head > span:nth-child(4) { display: none; }
     .arch-side, .arch-outputs, .tier-grid, .metric-grid, .usage-grid, .flow-map { grid-template-columns: 1fr; }
     .plane-grid { grid-template-columns: 1fr; } .control-plane { box-shadow: none; }
     .tier-card { border-right: 0; border-bottom: 1px solid var(--hairline-on-paper); } .tier-card:last-child { border-bottom: 0; }
@@ -927,6 +1040,9 @@ console.log(usage, subscriptionStatus)</code></pre>
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .container-scroll-stage { height: auto; margin-block: 4rem; }
+    .container-scroll-sticky { position: relative; top: auto; height: auto; }
+    .scroll-dashboard-frame { transform: none !important; }
     .plane-head .signal, .connector-pulse, .model-connector span { animation: none !important; }
     .architecture-map .arch-node, .architecture-map .plane-grid div { opacity: 1; transform: none; }
     .provider-list li { opacity: 1; transform: none; }
@@ -1551,6 +1667,35 @@ console.log(usage, subscriptionStatus)</code></pre>
         }
       }, { threshold: 0.25 });
       observer.observe(revenueRoot);
+    }
+  }
+
+  const meteringScroll = document.getElementById('metering-scroll');
+
+  if (meteringScroll) {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let ticking = false;
+
+    const updateMeteringScroll = () => {
+      const rect = meteringScroll.getBoundingClientRect();
+      const viewport = window.innerHeight;
+      const travel = Math.max(rect.height - viewport * 0.5, 1);
+      const progress = Math.min(1, Math.max(0, (viewport * 0.78 - rect.top) / travel));
+      meteringScroll.style.setProperty('--scroll-progress', progress.toFixed(4));
+      ticking = false;
+    };
+
+    if (reduced) {
+      meteringScroll.style.setProperty('--scroll-progress', '1');
+    } else {
+      const requestUpdate = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(updateMeteringScroll);
+      };
+      updateMeteringScroll();
+      addEventListener('scroll', requestUpdate, { passive: true });
+      addEventListener('resize', requestUpdate);
     }
   }
 
